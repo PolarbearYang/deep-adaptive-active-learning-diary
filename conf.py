@@ -16,11 +16,6 @@ from recommonmark.parser import CommonMarkParser
 source_parsers = {
     '.md': CommonMarkParser,
 }
-source_suffix = {
-    '.rst': 'restructuredtext',
-    '.md': 'markdown',
-}
-sys.path.insert(0, os.path.abspath('../src'))
 
 # -- Project information -----------------------------------------------------
 
@@ -50,6 +45,11 @@ extensions = [
    'sphinx.ext.viewcode',
    'sphinx.ext.githubpages',
 ]
+
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
