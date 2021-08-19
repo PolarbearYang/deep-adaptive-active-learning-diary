@@ -1,0 +1,1389 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>query_strategies package &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>query_strategies package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/query_strategies.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="query-strategies-package">
+<h1>query_strategies package<a class="headerlink" href="#query-strategies-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-query_strategies.active_learning_by_learning">
+<span id="query-strategies-active-learning-by-learning-module"></span><h2>query_strategies.active_learning_by_learning module<a class="headerlink" href="#module-query_strategies.active_learning_by_learning" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.active_learning_by_learning.ActiveLearningByLearning">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.active_learning_by_learning.</span></span><span class="sig-name descname"><span class="pre">ActiveLearningByLearning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/active_learning_by_learning.html#ActiveLearningByLearning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.active_learning_by_learning.ActiveLearningByLearning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.active_learning_by_learning.ActiveLearningByLearning.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/active_learning_by_learning.html#ActiveLearningByLearning.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.active_learning_by_learning.ActiveLearningByLearning.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.active_learning_by_learning.ActiveLearningByLearning.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/active_learning_by_learning.html#ActiveLearningByLearning.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.active_learning_by_learning.ActiveLearningByLearning.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the labeled indexes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idxs_lb</strong> – (np.ndrray[bool]) The new labeled indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.adversarial_bim">
+<span id="query-strategies-adversarial-bim-module"></span><h2>query_strategies.adversarial_bim module<a class="headerlink" href="#module-query_strategies.adversarial_bim" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.adversarial_bim.AdversarialBIM">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.adversarial_bim.</span></span><span class="sig-name descname"><span class="pre">AdversarialBIM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_bim.html#AdversarialBIM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.adversarial_bim.AdversarialBIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.adversarial_bim.AdversarialBIM.cal_dis">
+<span class="sig-name descname"><span class="pre">cal_dis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_bim.html#AdversarialBIM.cal_dis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.adversarial_bim.AdversarialBIM.cal_dis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.adversarial_bim.AdversarialBIM.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_bim.html#AdversarialBIM.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.adversarial_bim.AdversarialBIM.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.adversarial_deepfool">
+<span id="query-strategies-adversarial-deepfool-module"></span><h2>query_strategies.adversarial_deepfool module<a class="headerlink" href="#module-query_strategies.adversarial_deepfool" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.adversarial_deepfool.AdversarialDeepFool">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.adversarial_deepfool.</span></span><span class="sig-name descname"><span class="pre">AdversarialDeepFool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_deepfool.html#AdversarialDeepFool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.adversarial_deepfool.AdversarialDeepFool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.adversarial_deepfool.AdversarialDeepFool.cal_dis">
+<span class="sig-name descname"><span class="pre">cal_dis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_deepfool.html#AdversarialDeepFool.cal_dis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.adversarial_deepfool.AdversarialDeepFool.cal_dis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.adversarial_deepfool.AdversarialDeepFool.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_deepfool.html#AdversarialDeepFool.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.adversarial_deepfool.AdversarialDeepFool.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.bayesian_active_learning_disagreement_dropout">
+<span id="query-strategies-bayesian-active-learning-disagreement-dropout-module"></span><h2>query_strategies.bayesian_active_learning_disagreement_dropout module<a class="headerlink" href="#module-query_strategies.bayesian_active_learning_disagreement_dropout" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.bayesian_active_learning_disagreement_dropout.BALDDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.bayesian_active_learning_disagreement_dropout.</span></span><span class="sig-name descname"><span class="pre">BALDDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/bayesian_active_learning_disagreement_dropout.html#BALDDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.bayesian_active_learning_disagreement_dropout.BALDDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.bayesian_active_learning_disagreement_dropout.BALDDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/bayesian_active_learning_disagreement_dropout.html#BALDDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.bayesian_active_learning_disagreement_dropout.BALDDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.builder">
+<span id="query-strategies-builder-module"></span><h2>query_strategies.builder module<a class="headerlink" href="#module-query_strategies.builder" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-query_strategies.core_set">
+<span id="query-strategies-core-set-module"></span><h2>query_strategies.core_set module<a class="headerlink" href="#module-query_strategies.core_set" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.core_set.CoreSet">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.core_set.</span></span><span class="sig-name descname"><span class="pre">CoreSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/core_set.html#CoreSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.core_set.CoreSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.core_set.CoreSet.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/core_set.html#CoreSet.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.core_set.CoreSet.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.entropy_sampling">
+<span id="query-strategies-entropy-sampling-module"></span><h2>query_strategies.entropy_sampling module<a class="headerlink" href="#module-query_strategies.entropy_sampling" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.entropy_sampling.EntropySampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.entropy_sampling.</span></span><span class="sig-name descname"><span class="pre">EntropySampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling.html#EntropySampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.entropy_sampling.EntropySampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.entropy_sampling.EntropySampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling.html#EntropySampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.entropy_sampling.EntropySampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.entropy_sampling_dropout">
+<span id="query-strategies-entropy-sampling-dropout-module"></span><h2>query_strategies.entropy_sampling_dropout module<a class="headerlink" href="#module-query_strategies.entropy_sampling_dropout" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.entropy_sampling_dropout.EntropySamplingDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.entropy_sampling_dropout.</span></span><span class="sig-name descname"><span class="pre">EntropySamplingDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling_dropout.html#EntropySamplingDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.entropy_sampling_dropout.EntropySamplingDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.entropy_sampling_dropout.EntropySamplingDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling_dropout.html#EntropySamplingDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.entropy_sampling_dropout.EntropySamplingDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.kcenter_greedy">
+<span id="query-strategies-kcenter-greedy-module"></span><h2>query_strategies.kcenter_greedy module<a class="headerlink" href="#module-query_strategies.kcenter_greedy" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.kcenter_greedy.KCenterGreedy">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.kcenter_greedy.</span></span><span class="sig-name descname"><span class="pre">KCenterGreedy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kcenter_greedy.html#KCenterGreedy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.kcenter_greedy.KCenterGreedy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.kcenter_greedy.KCenterGreedy.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kcenter_greedy.html#KCenterGreedy.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.kcenter_greedy.KCenterGreedy.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.kmeans_sampling">
+<span id="query-strategies-kmeans-sampling-module"></span><h2>query_strategies.kmeans_sampling module<a class="headerlink" href="#module-query_strategies.kmeans_sampling" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.kmeans_sampling.KMeansSampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.kmeans_sampling.</span></span><span class="sig-name descname"><span class="pre">KMeansSampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kmeans_sampling.html#KMeansSampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.kmeans_sampling.KMeansSampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.kmeans_sampling.KMeansSampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kmeans_sampling.html#KMeansSampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.kmeans_sampling.KMeansSampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.least_confidence">
+<span id="query-strategies-least-confidence-module"></span><h2>query_strategies.least_confidence module<a class="headerlink" href="#module-query_strategies.least_confidence" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.least_confidence.LeastConfidence">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.least_confidence.</span></span><span class="sig-name descname"><span class="pre">LeastConfidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence.html#LeastConfidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.least_confidence.LeastConfidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.least_confidence.LeastConfidence.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence.html#LeastConfidence.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.least_confidence.LeastConfidence.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.least_confidence_dropout">
+<span id="query-strategies-least-confidence-dropout-module"></span><h2>query_strategies.least_confidence_dropout module<a class="headerlink" href="#module-query_strategies.least_confidence_dropout" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.least_confidence_dropout.LeastConfidenceDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.least_confidence_dropout.</span></span><span class="sig-name descname"><span class="pre">LeastConfidenceDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence_dropout.html#LeastConfidenceDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.least_confidence_dropout.LeastConfidenceDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.least_confidence_dropout.LeastConfidenceDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence_dropout.html#LeastConfidenceDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.least_confidence_dropout.LeastConfidenceDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.margin_sampling">
+<span id="query-strategies-margin-sampling-module"></span><h2>query_strategies.margin_sampling module<a class="headerlink" href="#module-query_strategies.margin_sampling" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.margin_sampling.MarginSampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.margin_sampling.</span></span><span class="sig-name descname"><span class="pre">MarginSampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling.html#MarginSampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.margin_sampling.MarginSampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.margin_sampling.MarginSampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling.html#MarginSampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.margin_sampling.MarginSampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.margin_sampling_dropout">
+<span id="query-strategies-margin-sampling-dropout-module"></span><h2>query_strategies.margin_sampling_dropout module<a class="headerlink" href="#module-query_strategies.margin_sampling_dropout" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.margin_sampling_dropout.MarginSamplingDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.margin_sampling_dropout.</span></span><span class="sig-name descname"><span class="pre">MarginSamplingDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling_dropout.html#MarginSamplingDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.margin_sampling_dropout.MarginSamplingDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.margin_sampling_dropout.MarginSamplingDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling_dropout.html#MarginSamplingDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.margin_sampling_dropout.MarginSamplingDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.random_sampling">
+<span id="query-strategies-random-sampling-module"></span><h2>query_strategies.random_sampling module<a class="headerlink" href="#module-query_strategies.random_sampling" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.random_sampling.RandomSampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.random_sampling.</span></span><span class="sig-name descname"><span class="pre">RandomSampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/random_sampling.html#RandomSampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.random_sampling.RandomSampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.random_sampling.RandomSampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/random_sampling.html#RandomSampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.random_sampling.RandomSampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly query samples in the unlabeled pool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.ndarray[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies.strategy">
+<span id="query-strategies-strategy-module"></span><h2>query_strategies.strategy module<a class="headerlink" href="#module-query_strategies.strategy" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.strategy.</span></span><span class="sig-name descname"><span class="pre">Strategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The base class wrapping the training and querying procedure.
+All new strategies should be inherited from this class.</p>
+<p>Typically in a new strategy, we can just overload the <cite>query</cite> member function,
+which returns the indices of queried samples.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>X: (Any)</dt><dd><p>Any form of raw data. It should be the <cite>train</cite> split of the dataset.</p>
+</dd>
+<dt>Y: (Any)</dt><dd><p>The labels of X.</p>
+</dd>
+<dt>idxs_lb: np.ndarray(bool)</dt><dd><p>An boolean array that has the same length with the <cite>train</cite> split of the dataset.</p>
+</dd>
+<dt>net: (class)</dt><dd><p>A net wrapper, with a <cite>__call__</cite> member that returns the model architecture,
+its parameters are just the parameters of the model class,
+arg <cite>num_classes</cite> is necessary.</p>
+</dd>
+<dt>handler: (torch.utils.data.Dataset)</dt><dd><p>Dataset wrappers designed for active learning, whose <cite>__getitem__</cite> returns (data, label, idx)</p>
+</dd>
+<dt>args: (dict)</dt><dd><p>Contains lots of information the strategy needs for training,
+including the ones in the parser and some newly added ones.
+Here we list some of them for detailed explanation.</p>
+<ul class="simple">
+<li><p><cite>work_dir</cite>: (str) The working directory, in which we save checkpoints, log info, figures</p></li>
+<li><p><cite>save_freq</cite>: (int) Save a checkpoint per <cite>save_freq</cite> epochs.</p></li>
+<li><p><cite>n_epoch</cite>: (int) How many epochs are in one active round.</p></li>
+<li><p><cite>batch_size</cite>: (int) Just the batch size of the dataloader.</p></li>
+<li><p><cite>num_workers</cite>: (int) <cite>num_workers</cite> of the dataloader.</p></li>
+<li><p><cite>lr</cite>: (float) Learning rate of the optimizer.</p></li>
+<li><p><cite>momentum</cite>: (float) Momentum of the optimizer.</p></li>
+<li><p><cite>out_iter_freq</cite>: (int) Print a log message per <cite>out_iter_freq</cite> iters.</p></li>
+<li><p><cite>num_classes</cite>: (int) The number of classes in the dataset.</p></li>
+<li><p><cite>label2text</cite>: (dict[int, str]) The class name corresponding to each label.</p></li>
+<li><p><cite>train_transform</cite>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torchvision.transforms.Compose</span></code>)Transformation applied to the training data.</p></li>
+<li><p><cite>eval_transform</cite>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torchvision.transforms.Compose</span></code>)Transformation applied to the eval/test data.</p></li>
+<li><p><cite>timestamp</cite>: (str) The start timestamp of the process.</p></li>
+<li><p><cite>logger</cite>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">logging.RootLogger</span></code>) The logger to use.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.get_embedding">
+<span class="sig-name descname"><span class="pre">get_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.get_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.get_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the feature embedding of the current data split.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – (Any) Any sort of raw data.</p></li>
+<li><p><strong>Y</strong> – (Any) Labels corresponding to X.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: The feature embedding of all samples in the current data split.
+Actually we output distributions of all dropout versions in a 3-dimensional tensor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.init_clf">
+<span class="sig-name descname"><span class="pre">init_clf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.init_clf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.init_clf" title="Permalink to this definition">¶</a></dt>
+<dd><p>When we want to initialize the model we use, apply this function.
+Random parameter initialization is included.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>To predict the accuracy of some data split.
+We typically input the raw data of eval/test split here.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: The output label corresponding to each sample.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.predict_eval">
+<span class="sig-name descname"><span class="pre">predict_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'val'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.predict_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the predicted accuracy of the current data split.
+We typically input the raw data of eval/test split here.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+<dt class="field-odd">param mode</dt>
+<dd class="field-odd"><p>(str) Choose <cite>val</cite> or <cite>test</cite>, in mode <cite>val</cite>, the number of active round will be recorded.</p>
+</dd>
+<dt class="field-even">param rd</dt>
+<dd class="field-even"><p>(int) The current active round.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>float: The output label corresponding to each sample.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.predict_prob">
+<span class="sig-name descname"><span class="pre">predict_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.predict_prob" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the output probability distribution of the current data split.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – (Any) Any sort of raw data.</p></li>
+<li><p><strong>Y</strong> – (Any) Labels corresponding to X.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: output probability distribution of all samples in the current data split</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.predict_prob_dropout">
+<span class="sig-name descname"><span class="pre">predict_prob_dropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_prob_dropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.predict_prob_dropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the output probability distribution of the current data split.
+Output the average of all dropout versions.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+<dt class="field-odd">param n_drop</dt>
+<dd class="field-odd"><p>(int) The number of times to perform dropout(Only available when there is <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Dropout</span></code> module in the model).</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: output probability distribution of all samples in the current data split.
+Actually we output the average distribution of all dropout versions.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.predict_prob_dropout_split">
+<span class="sig-name descname"><span class="pre">predict_prob_dropout_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_prob_dropout_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.predict_prob_dropout_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the output probability distribution of the current data split.
+All dropout versions will be recorded.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+<dt class="field-odd">param n_drop</dt>
+<dd class="field-odd"><p>(int) The number of times to perform dropout(Only available when there is <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Dropout</span></code> module in the model).</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: output probability distribution of all samples in the current data split.
+Actually we output distributions of all dropout versions in a 3-dimensional tensor.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.resume">
+<span class="sig-name descname"><span class="pre">resume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.resume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resume from the last checkpoint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current model parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.save_for_resume">
+<span class="sig-name descname"><span class="pre">save_for_resume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.save_for_resume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.save_for_resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the all the information for resuming
+(Deal with the case when the procedure unexpectly terminates.)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resumed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents one epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resumed</strong> – (bool) A flag indicating whether to resume from an uncomplete task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.strategy.Strategy.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.Strategy.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the labeled indexes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idxs_lb</strong> – (np.ndrray[bool]) The new labeled indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="query_strategies.strategy.get_lr">
+<span class="sig-prename descclassname"><span class="pre">query_strategies.strategy.</span></span><span class="sig-name descname"><span class="pre">get_lr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#get_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.strategy.get_lr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-query_strategies">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-query_strategies" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.ActiveLearningByLearning">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">ActiveLearningByLearning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/active_learning_by_learning.html#ActiveLearningByLearning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.ActiveLearningByLearning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.ActiveLearningByLearning.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/active_learning_by_learning.html#ActiveLearningByLearning.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.ActiveLearningByLearning.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.ActiveLearningByLearning.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/active_learning_by_learning.html#ActiveLearningByLearning.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.ActiveLearningByLearning.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the labeled indexes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idxs_lb</strong> – (np.ndrray[bool]) The new labeled indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.AdversarialBIM">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">AdversarialBIM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_bim.html#AdversarialBIM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.AdversarialBIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.AdversarialBIM.cal_dis">
+<span class="sig-name descname"><span class="pre">cal_dis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_bim.html#AdversarialBIM.cal_dis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.AdversarialBIM.cal_dis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.AdversarialBIM.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_bim.html#AdversarialBIM.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.AdversarialBIM.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.AdversarialDeepFool">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">AdversarialDeepFool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_deepfool.html#AdversarialDeepFool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.AdversarialDeepFool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.AdversarialDeepFool.cal_dis">
+<span class="sig-name descname"><span class="pre">cal_dis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_deepfool.html#AdversarialDeepFool.cal_dis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.AdversarialDeepFool.cal_dis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.AdversarialDeepFool.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/adversarial_deepfool.html#AdversarialDeepFool.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.AdversarialDeepFool.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.BALDDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">BALDDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/bayesian_active_learning_disagreement_dropout.html#BALDDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.BALDDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.BALDDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/bayesian_active_learning_disagreement_dropout.html#BALDDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.BALDDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.CoreSet">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">CoreSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/core_set.html#CoreSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.CoreSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.CoreSet.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/core_set.html#CoreSet.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.CoreSet.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.EntropySampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">EntropySampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling.html#EntropySampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.EntropySampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.EntropySampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling.html#EntropySampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.EntropySampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.EntropySamplingDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">EntropySamplingDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling_dropout.html#EntropySamplingDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.EntropySamplingDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.EntropySamplingDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling_dropout.html#EntropySamplingDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.EntropySamplingDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.KCenterGreedy">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">KCenterGreedy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kcenter_greedy.html#KCenterGreedy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.KCenterGreedy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.KCenterGreedy.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kcenter_greedy.html#KCenterGreedy.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.KCenterGreedy.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.KMeansSampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">KMeansSampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kmeans_sampling.html#KMeansSampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.KMeansSampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.KMeansSampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/kmeans_sampling.html#KMeansSampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.KMeansSampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.LeastConfidence">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">LeastConfidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence.html#LeastConfidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.LeastConfidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.LeastConfidence.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence.html#LeastConfidence.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.LeastConfidence.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.LeastConfidenceDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">LeastConfidenceDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence_dropout.html#LeastConfidenceDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.LeastConfidenceDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.LeastConfidenceDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/least_confidence_dropout.html#LeastConfidenceDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.LeastConfidenceDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.MarginSampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">MarginSampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling.html#MarginSampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.MarginSampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.MarginSampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling.html#MarginSampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.MarginSampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.MarginSamplingDropout">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">MarginSamplingDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling_dropout.html#MarginSamplingDropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.MarginSamplingDropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.MarginSamplingDropout.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/margin_sampling_dropout.html#MarginSamplingDropout.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.MarginSamplingDropout.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.RandomSampling">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">RandomSampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/random_sampling.html#RandomSampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.RandomSampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#query_strategies.strategy.Strategy" title="query_strategies.strategy.Strategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">query_strategies.strategy.Strategy</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.RandomSampling.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/random_sampling.html#RandomSampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.RandomSampling.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly query samples in the unlabeled pool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>np.ndarray[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="query_strategies.Strategy">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">query_strategies.</span></span><span class="sig-name descname"><span class="pre">Strategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The base class wrapping the training and querying procedure.
+All new strategies should be inherited from this class.</p>
+<p>Typically in a new strategy, we can just overload the <cite>query</cite> member function,
+which returns the indices of queried samples.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>X: (Any)</dt><dd><p>Any form of raw data. It should be the <cite>train</cite> split of the dataset.</p>
+</dd>
+<dt>Y: (Any)</dt><dd><p>The labels of X.</p>
+</dd>
+<dt>idxs_lb: np.ndarray(bool)</dt><dd><p>An boolean array that has the same length with the <cite>train</cite> split of the dataset.</p>
+</dd>
+<dt>net: (class)</dt><dd><p>A net wrapper, with a <cite>__call__</cite> member that returns the model architecture,
+its parameters are just the parameters of the model class,
+arg <cite>num_classes</cite> is necessary.</p>
+</dd>
+<dt>handler: (torch.utils.data.Dataset)</dt><dd><p>Dataset wrappers designed for active learning, whose <cite>__getitem__</cite> returns (data, label, idx)</p>
+</dd>
+<dt>args: (dict)</dt><dd><p>Contains lots of information the strategy needs for training,
+including the ones in the parser and some newly added ones.
+Here we list some of them for detailed explanation.</p>
+<ul class="simple">
+<li><p><cite>work_dir</cite>: (str) The working directory, in which we save checkpoints, log info, figures</p></li>
+<li><p><cite>save_freq</cite>: (int) Save a checkpoint per <cite>save_freq</cite> epochs.</p></li>
+<li><p><cite>n_epoch</cite>: (int) How many epochs are in one active round.</p></li>
+<li><p><cite>batch_size</cite>: (int) Just the batch size of the dataloader.</p></li>
+<li><p><cite>num_workers</cite>: (int) <cite>num_workers</cite> of the dataloader.</p></li>
+<li><p><cite>lr</cite>: (float) Learning rate of the optimizer.</p></li>
+<li><p><cite>momentum</cite>: (float) Momentum of the optimizer.</p></li>
+<li><p><cite>out_iter_freq</cite>: (int) Print a log message per <cite>out_iter_freq</cite> iters.</p></li>
+<li><p><cite>num_classes</cite>: (int) The number of classes in the dataset.</p></li>
+<li><p><cite>label2text</cite>: (dict[int, str]) The class name corresponding to each label.</p></li>
+<li><p><cite>train_transform</cite>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torchvision.transforms.Compose</span></code>)Transformation applied to the training data.</p></li>
+<li><p><cite>eval_transform</cite>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torchvision.transforms.Compose</span></code>)Transformation applied to the eval/test data.</p></li>
+<li><p><cite>timestamp</cite>: (str) The start timestamp of the process.</p></li>
+<li><p><cite>logger</cite>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">logging.RootLogger</span></code>) The logger to use.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.get_embedding">
+<span class="sig-name descname"><span class="pre">get_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.get_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.get_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the feature embedding of the current data split.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – (Any) Any sort of raw data.</p></li>
+<li><p><strong>Y</strong> – (Any) Labels corresponding to X.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: The feature embedding of all samples in the current data split.
+Actually we output distributions of all dropout versions in a 3-dimensional tensor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.init_clf">
+<span class="sig-name descname"><span class="pre">init_clf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.init_clf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.init_clf" title="Permalink to this definition">¶</a></dt>
+<dd><p>When we want to initialize the model we use, apply this function.
+Random parameter initialization is included.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>To predict the accuracy of some data split.
+We typically input the raw data of eval/test split here.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: The output label corresponding to each sample.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.predict_eval">
+<span class="sig-name descname"><span class="pre">predict_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'val'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.predict_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the predicted accuracy of the current data split.
+We typically input the raw data of eval/test split here.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+<dt class="field-odd">param mode</dt>
+<dd class="field-odd"><p>(str) Choose <cite>val</cite> or <cite>test</cite>, in mode <cite>val</cite>, the number of active round will be recorded.</p>
+</dd>
+<dt class="field-even">param rd</dt>
+<dd class="field-even"><p>(int) The current active round.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>float: The output label corresponding to each sample.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.predict_prob">
+<span class="sig-name descname"><span class="pre">predict_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.predict_prob" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the output probability distribution of the current data split.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – (Any) Any sort of raw data.</p></li>
+<li><p><strong>Y</strong> – (Any) Labels corresponding to X.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: output probability distribution of all samples in the current data split</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.predict_prob_dropout">
+<span class="sig-name descname"><span class="pre">predict_prob_dropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_prob_dropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.predict_prob_dropout" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the output probability distribution of the current data split.
+Output the average of all dropout versions.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+<dt class="field-odd">param n_drop</dt>
+<dd class="field-odd"><p>(int) The number of times to perform dropout(Only available when there is <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Dropout</span></code> module in the model).</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: output probability distribution of all samples in the current data split.
+Actually we output the average distribution of all dropout versions.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.predict_prob_dropout_split">
+<span class="sig-name descname"><span class="pre">predict_prob_dropout_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_drop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.predict_prob_dropout_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.predict_prob_dropout_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>To get the output probability distribution of the current data split.
+All dropout versions will be recorded.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param X</dt>
+<dd class="field-odd"><p>(Any) Any sort of raw data.</p>
+</dd>
+<dt class="field-even">param Y</dt>
+<dd class="field-even"><p>(Any) Labels corresponding to X.</p>
+</dd>
+<dt class="field-odd">param n_drop</dt>
+<dd class="field-odd"><p>(int) The number of times to perform dropout(Only available when there is <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Dropout</span></code> module in the model).</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: output probability distribution of all samples in the current data split.
+Actually we output distributions of all dropout versions in a 3-dimensional tensor.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query new samples according the current model or some strategies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.resume">
+<span class="sig-name descname"><span class="pre">resume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.resume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resume from the last checkpoint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current model parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.save_for_resume">
+<span class="sig-name descname"><span class="pre">save_for_resume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.save_for_resume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.save_for_resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the all the information for resuming
+(Deal with the case when the procedure unexpectly terminates.)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resumed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents one epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resumed</strong> – (bool) A flag indicating whether to resume from an uncomplete task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="query_strategies.Strategy.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idxs_lb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/strategy.html#Strategy.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.Strategy.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the labeled indexes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idxs_lb</strong> – (np.ndrray[bool]) The new labeled indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

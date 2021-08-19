@@ -1,0 +1,1015 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>utils package &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="utils-package">
+<h1>utils package<a class="headerlink" href="#utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.handlers.html">utils.handlers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.handlers.html#module-utils.handlers.base">utils.handlers.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.handlers.html#module-utils.handlers.json_handler">utils.handlers.json_handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.handlers.html#module-utils.handlers.pickle_handler">utils.handlers.pickle_handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.handlers.html#module-utils.handlers.yaml_handler">utils.handlers.yaml_handler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.handlers.html#module-utils.handlers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-utils.collect_env">
+<span id="utils-collect-env-module"></span><h2>utils.collect_env module<a class="headerlink" href="#module-utils.collect_env" title="Permalink to this headline">¶</a></h2>
+<p>This file holding some environment constant for sharing by other files.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.collect_env.collect_env">
+<span class="sig-prename descclassname"><span class="pre">utils.collect_env.</span></span><span class="sig-name descname"><span class="pre">collect_env</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/collect_env.html#collect_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.collect_env.collect_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect the information of the running environments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>dict: The environment information. The following fields are contained.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>sys.platform: The variable of <code class="docutils literal notranslate"><span class="pre">sys.platform</span></code>.</p></li>
+<li><p>Python: Python version.</p></li>
+<li><p>CUDA available: Bool, indicating if CUDA is available.</p></li>
+<li><p>GPU devices: Device type of each GPU.</p></li>
+<li><p>CUDA_HOME (optional): The env var <code class="docutils literal notranslate"><span class="pre">CUDA_HOME</span></code>.</p></li>
+<li><p>NVCC (optional): NVCC version.</p></li>
+<li><p>GCC: GCC version, “n/a” if GCC is not installed.</p></li>
+<li><p>PyTorch: PyTorch version.</p></li>
+<li><p>PyTorch compiling details: The output of                 <code class="docutils literal notranslate"><span class="pre">torch.__config__.show()</span></code>.</p></li>
+<li><p>TorchVision (optional): TorchVision version.</p></li>
+<li><p>OpenCV: OpenCV version.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.collect_env.get_build_config">
+<span class="sig-prename descclassname"><span class="pre">utils.collect_env.</span></span><span class="sig-name descname"><span class="pre">get_build_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/collect_env.html#get_build_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.collect_env.get_build_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-utils.config">
+<span id="utils-config-module"></span><h2>utils.config module<a class="headerlink" href="#module-utils.config" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.config.parse_commandline_args">
+<span class="sig-prename descclassname"><span class="pre">utils.config.</span></span><span class="sig-name descname"><span class="pre">parse_commandline_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/config.html#parse_commandline_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.config.parse_commandline_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the args from the command line</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.in_out">
+<span id="utils-in-out-module"></span><h2>utils.in_out module<a class="headerlink" href="#module-utils.in_out" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.in_out.dump">
+<span class="sig-prename descclassname"><span class="pre">utils.in_out.</span></span><span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/in_out.html#dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.in_out.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump data to json/yaml/pickle strings or files.
+This method provides a unified api for dumping data as strings or to files,
+and also supports custom arguments for each file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – The python object to be dumped.</p></li>
+<li><p><strong>file</strong> – If not specified, then the object is dump to a str, otherwise to a file
+specified by the filename or file-like object.</p></li>
+<li><p><strong>file_format</strong> – Same as <a class="reference internal" href="#utils.in_out.load" title="utils.in_out.load"><code class="xref py py-func docutils literal notranslate"><span class="pre">load()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.in_out.load">
+<span class="sig-prename descclassname"><span class="pre">utils.in_out.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/in_out.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.in_out.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load data from json/yaml/pickle files.</p>
+<p>This method provides a unified api for loading data from serialized files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> – Filename or a file-like
+object.</p></li>
+<li><p><strong>file_format</strong> – If not specified, the file format will be
+inferred from the file extension, otherwise use the specified one.
+Currently supported formats include “json”, “yaml/yml” and
+“pickle/pkl”.</p></li>
+</ul>
+</dd>
+</dl>
+<p>:return The content from the file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.in_out.register_handler">
+<span class="sig-prename descclassname"><span class="pre">utils.in_out.</span></span><span class="sig-name descname"><span class="pre">register_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_formats</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/in_out.html#register_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.in_out.register_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-utils.logger">
+<span id="utils-logger-module"></span><h2>utils.logger module<a class="headerlink" href="#module-utils.logger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.logger.get_logger">
+<span class="sig-prename descclassname"><span class="pre">utils.logger.</span></span><span class="sig-name descname"><span class="pre">get_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/logger.html#get_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.logger.get_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize and get a logger by name.
+If the logger has not been initialized, this method will initialize the
+logger by adding one or two handlers, otherwise the initialized logger will
+be directly returned. During initialization, a StreamHandler will always be
+added. If <cite>log_file</cite> is specified and the process rank is 0, a FileHandler
+will also be added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>name (str): Logger name.</p>
+</dd>
+<dt class="field-even">Param</dt>
+<dd class="field-even"><p>log_file (str | None): The log filename. If specified, a FileHandler
+will be added to the logger.</p>
+</dd>
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>log_level (int): The logger level. Note that only the process of
+rank 0 is affected, and other processes will set the level to
+“Error” thus be silent most of the time.</p>
+</dd>
+<dt class="field-even">Param</dt>
+<dd class="field-even"><p>file_mode (str): The file mode used in opening log file.
+Defaults to ‘w’.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>logging.Logger: The expected logger.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.logger.print_log">
+<span class="sig-prename descclassname"><span class="pre">utils.logger.</span></span><span class="sig-name descname"><span class="pre">print_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/logger.html#print_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.logger.print_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a log message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>msg (str): The message to be logged.</p>
+</dd>
+<dt class="field-even">Param</dt>
+<dd class="field-even"><p>logger (logging.Logger | str | None): The logger to be used.
+Some special loggers are:
+- “silent”: no message will be printed.
+- other str: the logger obtained with <cite>get_root_logger(logger)</cite>.
+- None: The <cite>print()</cite> method will be used to print log messages.</p>
+</dd>
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>level (int): Logging level. Only available when <cite>logger</cite> is a Logger
+object or “root”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.misc">
+<span id="utils-misc-module"></span><h2>utils.misc module<a class="headerlink" href="#module-utils.misc" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.concat_list">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">concat_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#concat_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.concat_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate a list of list into a single list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>in_list</strong> – (list) The list of list to be merged.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list: The concatenated flat list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.deprecated_api_warning">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">deprecated_api_warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#deprecated_api_warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.deprecated_api_warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decorator to check if some arguments are deprecate and try to replace
+deprecate src_arg_name to dst_arg_name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name_dict</strong> – (dict)
+- key (str): Deprecate argument names.
+- val (str): Expected argument names.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>func: New function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.import_modules_from_strings">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">import_modules_from_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imports</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_failed_imports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#import_modules_from_strings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.import_modules_from_strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import modules from the given list of strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>imports: The given module names to be imported.</p>
+</dd>
+<dt class="field-even">Param</dt>
+<dd class="field-even"><p>allow_failed_imports: If True, the failed imports will return
+None. Otherwise, an ImportError is raise. Default: False.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The imported modules.</p>
+</dd>
+</dl>
+<dl>
+<dt>Examples:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">osp</span><span class="p">,</span> <span class="n">sys</span> <span class="o">=</span> <span class="n">import_modules_from_strings</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="s1">&#39;os.path&#39;</span><span class="p">,</span> <span class="s1">&#39;sys&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sys</span> <span class="k">as</span> <span class="nn">sys_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">osp</span> <span class="o">==</span> <span class="n">osp_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">sys</span> <span class="o">==</span> <span class="n">sys_</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.is_list_of">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">is_list_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#is_list_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.is_list_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether it is a list of some type.</p>
+<p>A partial method of <a class="reference internal" href="#utils.misc.is_seq_of" title="utils.misc.is_seq_of"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_seq_of()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.is_method_overridden">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">is_method_overridden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derived_class</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#is_method_overridden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.is_method_overridden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a method of base class is overridden in derived class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> – (str) the method name to check.</p></li>
+<li><p><strong>base_class</strong> – (type) the class of the base class.</p></li>
+<li><p><strong>derived_class</strong> – (type | Any) the class or instance of the derived class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.is_seq_of">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">is_seq_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#is_seq_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.is_seq_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether it is a sequence of some type.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>seq (Sequence): The sequence to be checked.
+expected_type (type): Expected type of sequence items.
+seq_type (type, optional): Expected sequence type.</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: Whether the sequence is valid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.is_str">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">is_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#is_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.is_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the input is an string instance.</p>
+<p>Note: This method is deprecated since python 2 is no longer supported.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.is_tuple_of">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">is_tuple_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#is_tuple_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.is_tuple_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether it is a tuple of some type.</p>
+<p>A partial method of <a class="reference internal" href="#utils.misc.is_seq_of" title="utils.misc.is_seq_of"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_seq_of()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.iter_cast">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">iter_cast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#iter_cast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.iter_cast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cast elements of an iterable object into some type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputs</strong> – (Iterable) The input object.</p></li>
+<li><p><strong>dst_type</strong> – (type) Destination type.</p></li>
+<li><p><strong>return_type</strong> – (type, optional) If specified, the output object will be
+converted to this type, otherwise an iterator.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>iterator or specified type: The converted object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.list_cast">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">list_cast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#list_cast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.list_cast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cast elements of an iterable object into a list of some type.</p>
+<p>A partial method of <a class="reference internal" href="#utils.misc.iter_cast" title="utils.misc.iter_cast"><code class="xref py py-func docutils literal notranslate"><span class="pre">iter_cast()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.slice_list">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">slice_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lens</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#slice_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.slice_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slice a list into several sub lists by a list of given length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_list</strong> – (list) The list to be sliced.</p></li>
+<li><p><strong>lens</strong> – (int or list) The expected length of each out list.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list: A list of sliced list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.to_1tuple">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">to_1tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.misc.to_1tuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.to_2tuple">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">to_2tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.misc.to_2tuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.to_3tuple">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">to_3tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.misc.to_3tuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.to_4tuple">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">to_4tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.misc.to_4tuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.to_ntuple">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">to_ntuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.misc.to_ntuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.misc.tuple_cast">
+<span class="sig-prename descclassname"><span class="pre">utils.misc.</span></span><span class="sig-name descname"><span class="pre">tuple_cast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/misc.html#tuple_cast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.misc.tuple_cast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cast elements of an iterable object into a tuple of some type.</p>
+<p>A partial method of <a class="reference internal" href="#utils.misc.iter_cast" title="utils.misc.iter_cast"><code class="xref py py-func docutils literal notranslate"><span class="pre">iter_cast()</span></code></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.plot_config">
+<span id="utils-plot-config-module"></span><h2>utils.plot_config module<a class="headerlink" href="#module-utils.plot_config" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.plot_config.parse_commandline_args">
+<span class="sig-prename descclassname"><span class="pre">utils.plot_config.</span></span><span class="sig-name descname"><span class="pre">parse_commandline_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/plot_config.html#parse_commandline_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.plot_config.parse_commandline_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the args from the command line</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.progressbar">
+<span id="utils-progressbar-module"></span><h2>utils.progressbar module<a class="headerlink" href="#module-utils.progressbar" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.progressbar.ProgressBar">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">utils.progressbar.</span></span><span class="sig-name descname"><span class="pre">ProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task_num=0</span></em>, <em class="sig-param"><span class="pre">bar_width=50</span></em>, <em class="sig-param"><span class="pre">start=True</span></em>, <em class="sig-param"><span class="pre">file=&lt;colorama.ansitowin32.StreamWrapper</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/progressbar.html#ProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.progressbar.ProgressBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A progress bar which can print the progress.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.progressbar.ProgressBar.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/progressbar.html#ProgressBar.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.progressbar.ProgressBar.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="utils.progressbar.ProgressBar.terminal_width">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">terminal_width</span></span><a class="headerlink" href="#utils.progressbar.ProgressBar.terminal_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.progressbar.ProgressBar.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_tasks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/progressbar.html#ProgressBar.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.progressbar.ProgressBar.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.progressbar.init_pool">
+<span class="sig-prename descclassname"><span class="pre">utils.progressbar.</span></span><span class="sig-name descname"><span class="pre">init_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/progressbar.html#init_pool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.progressbar.init_pool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.progressbar.track_iter_progress">
+<span class="sig-prename descclassname"><span class="pre">utils.progressbar.</span></span><span class="sig-name descname"><span class="pre">track_iter_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">tasks</span></em>, <em class="sig-param"><span class="pre">bar_width=50</span></em>, <em class="sig-param"><span class="pre">file=&lt;colorama.ansitowin32.StreamWrapper</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/progressbar.html#track_iter_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.progressbar.track_iter_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Track the progress of tasks iteration or enumeration with a progress
+bar.</p>
+<p>Tasks are yielded with a simple for-loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tasks</strong> – (list or tuple[Iterable, int]) A list of tasks or
+(tasks, total num).</p></li>
+<li><p><strong>bar_width</strong> – (int) Width of progress bar.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Yields:</dt><dd><p>list: The task results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.progressbar.track_parallel_progress">
+<span class="sig-prename descclassname"><span class="pre">utils.progressbar.</span></span><span class="sig-name descname"><span class="pre">track_parallel_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">func</span></em>, <em class="sig-param"><span class="pre">tasks</span></em>, <em class="sig-param"><span class="pre">nproc</span></em>, <em class="sig-param"><span class="pre">initializer=None</span></em>, <em class="sig-param"><span class="pre">initargs=None</span></em>, <em class="sig-param"><span class="pre">bar_width=50</span></em>, <em class="sig-param"><span class="pre">chunksize=1</span></em>, <em class="sig-param"><span class="pre">skip_first=False</span></em>, <em class="sig-param"><span class="pre">keep_order=True</span></em>, <em class="sig-param"><span class="pre">file=&lt;colorama.ansitowin32.StreamWrapper</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/progressbar.html#track_parallel_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.progressbar.track_parallel_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Track the progress of parallel task execution with a progress bar.</p>
+<p>The built-in <code class="xref py py-mod docutils literal notranslate"><span class="pre">multiprocessing</span></code> module is used for process pools and
+tasks are done with <code class="xref py py-func docutils literal notranslate"><span class="pre">Pool.map()</span></code> or <code class="xref py py-func docutils literal notranslate"><span class="pre">Pool.imap_unordered()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – (callable) The function to be applied to each task.</p></li>
+<li><p><strong>tasks</strong> – (list or tuple[Iterable, int]) A list of tasks or
+(tasks, total num).</p></li>
+<li><p><strong>nproc</strong> – (int) Process (worker) number.</p></li>
+<li><p><strong>initializer</strong> – (None or callable) Refer to <code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code>
+for details.</p></li>
+<li><p><strong>initargs</strong> – (None or tuple) Refer to <code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> for
+details.</p></li>
+<li><p><strong>chunksize</strong> – (int) Refer to <code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> for details.</p></li>
+<li><p><strong>bar_width</strong> – (int) Width of progress bar.</p></li>
+<li><p><strong>skip_first</strong> – (bool) Whether to skip the first sample for each worker
+when estimating fps, since the initialization step may takes
+longer.</p></li>
+<li><p><strong>keep_order</strong> – (bool) If True, <code class="xref py py-func docutils literal notranslate"><span class="pre">Pool.imap()</span></code> is used, otherwise
+<code class="xref py py-func docutils literal notranslate"><span class="pre">Pool.imap_unordered()</span></code> is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list: The task results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.progressbar.track_progress">
+<span class="sig-prename descclassname"><span class="pre">utils.progressbar.</span></span><span class="sig-name descname"><span class="pre">track_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">func</span></em>, <em class="sig-param"><span class="pre">tasks</span></em>, <em class="sig-param"><span class="pre">bar_width=50</span></em>, <em class="sig-param"><span class="pre">file=&lt;colorama.ansitowin32.StreamWrapper</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/progressbar.html#track_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.progressbar.track_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Track the progress of tasks execution with a progress bar.</p>
+<p>Tasks are done with a simple for-loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The function to be applied to each task.</p></li>
+<li><p><strong>tasks</strong> – A list of tasks or
+(tasks, total num).</p></li>
+<li><p><strong>bar_width</strong> – Width of progress bar.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list: The task results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.registry">
+<span id="utils-registry-module"></span><h2>utils.registry module<a class="headerlink" href="#module-utils.registry" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.registry.Registry">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">utils.registry.</span></span><span class="sig-name descname"><span class="pre">Registry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#Registry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.Registry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A registry to map strings to classes.</p>
+<p>Registered object could be built from registry.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>name (str):</dt><dd><p>Registry name.</p>
+</dd>
+<dt>build_func(func, optional):</dt><dd><p>Build function to construct instance from
+Registry, func:<cite>build_from_cfg</cite> is used if neither <code class="docutils literal notranslate"><span class="pre">parent</span></code> or
+<code class="docutils literal notranslate"><span class="pre">build_func</span></code> is specified. If <code class="docutils literal notranslate"><span class="pre">parent</span></code> is specified and
+<code class="docutils literal notranslate"><span class="pre">build_func</span></code> is not given,  <code class="docutils literal notranslate"><span class="pre">build_func</span></code> will be inherited
+from <code class="docutils literal notranslate"><span class="pre">parent</span></code>. Default: None.</p>
+</dd>
+<dt>parent (Registry, optional):</dt><dd><p>Parent registry. The class registered in
+children registry could be built from parent. Default: None.</p>
+</dd>
+<dt>scope (str, optional):</dt><dd><p>The scope of registry. It is the key to search
+for children registry. If not specified, scope will be the name of
+the package where class is defined.
+Default: None.</p>
+</dd>
+</dl>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MODELS</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@MODELS</span><span class="o">.</span><span class="n">register_module</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">ResNet</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resnet</span> <span class="o">=</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;ResNet&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.registry.Registry.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#Registry.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.Registry.build" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="utils.registry.Registry.children">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#utils.registry.Registry.children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.registry.Registry.deprecated_register_module">
+<span class="sig-name descname"><span class="pre">deprecated_register_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#Registry.deprecated_register_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.Registry.deprecated_register_module" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.registry.Registry.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#Registry.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the registry record.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>key (str): The class name in string format.</p>
+</dd>
+<dt>Returns:</dt><dd><p>class: The corresponding class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.registry.Registry.infer_scope">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">infer_scope</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#Registry.infer_scope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.Registry.infer_scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Infer the scope of registry.</p>
+<p>The name of the package where registry is defined will be returned.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p># in architectures/resnet.py
+&gt;&gt;&gt; MODELS = Registry(‘models’)
+&gt;&gt;&gt; &#64;MODELS.register_module()
+&gt;&gt;&gt; class ResNet:
+&gt;&gt;&gt;     pass</p>
+</dd>
+<dt>Returns:</dt><dd><p>scope (str): The inferred scope name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="utils.registry.Registry.module_dict">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">module_dict</span></span><a class="headerlink" href="#utils.registry.Registry.module_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="utils.registry.Registry.name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#utils.registry.Registry.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.registry.Registry.register_module">
+<span class="sig-name descname"><span class="pre">register_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#Registry.register_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.Registry.register_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a module.</p>
+<p>A record will be added to <cite>self._module_dict</cite>, whose key is the class
+name or the specified name, and value is the class itself.
+It can be used as a decorator or a normal function.</p>
+<dl>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">backbones</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s1">&#39;backbone&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@backbones</span><span class="o">.</span><span class="n">register_module</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">ResNet</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">backbones</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s1">&#39;backbone&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@backbones</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mnet&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MobileNet</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">backbones</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s1">&#39;backbone&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">ResNet</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">backbones</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">ResNet</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>name (str | None):</dt><dd><p>The module name to be registered. If not specified, the class name will be used.</p>
+</dd>
+<dt>force (bool, optional):</dt><dd><p>Whether to override an existing class with the same name. Default: False.</p>
+</dd>
+<dt>module (type)</dt><dd><p>Module class to be registered.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="utils.registry.Registry.scope">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scope</span></span><a class="headerlink" href="#utils.registry.Registry.scope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.registry.Registry.split_scope_key">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">split_scope_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#Registry.split_scope_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.Registry.split_scope_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split scope and key.</p>
+<p>The first scope will be split from key.</p>
+<dl>
+<dt>Examples:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Registry</span><span class="o">.</span><span class="n">split_scope_key</span><span class="p">(</span><span class="s1">&#39;ResNet&#39;</span><span class="p">)</span>
+<span class="go">None, &#39;ResNet&#39;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Return:</dt><dd><p>scope (str, None): The first scope.
+key (str): The remaining key.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.registry.build_from_cfg">
+<span class="sig-prename descclassname"><span class="pre">utils.registry.</span></span><span class="sig-name descname"><span class="pre">build_from_cfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">registry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/registry.html#build_from_cfg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.registry.build_from_cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a module from config dict.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>cfg (dict):</dt><dd><p>Config dict. It should at least contain the key “type”.</p>
+</dd>
+<dt>registry (<a class="reference internal" href="#utils.registry.Registry" title="utils.registry.Registry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Registry</span></code></a>):</dt><dd><p>The registry to search the type from.</p>
+</dd>
+<dt>default_args (dict, optional):</dt><dd><p>Default initialization arguments.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>object: The constructed object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.text">
+<span id="utils-text-module"></span><h2>utils.text module<a class="headerlink" href="#module-utils.text" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.text.TextLogger">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">utils.text.</span></span><span class="sig-name descname"><span class="pre">TextLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/text.html#TextLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.text.TextLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Logger specially customized for <cite>Strategy</cite>.
+Apart from the basic logger provided by <cite>Strategy</cite>
+(The basic logger outputs information in consoles and <cite>*.log</cite>),
+it additionally records information in <cite>*.json</cite>,
+makes it easier to plot neccessary figures in result analysis.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>model: (torch.nn.Module)</dt><dd><p>The model used in the task. Just provides the architecture.
+This is just for recording the information of devices and memory.
+It does not matter what its parameters are.</p>
+</dd>
+<dt>args: (dict)</dt><dd><p>The necessary args provided by Class <cite>Strategy</cite> in <cite>query_strategies/strategy.py</cite> module.
+At least it should include the following parameters:</p>
+<ul class="simple">
+<li><p>timestamp: The starting timestamp of the strategy</p></li>
+<li><p>work_dir: The working directory of the current strategy</p></li>
+<li><p>logger: The basic logger used by class <cite>Strategy</cite></p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.text.TextLogger.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iters_per_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/text.html#TextLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.text.TextLogger.log" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Log the current training/evaluation/testing information in <cite>*.log</cite> and console,</dt><dd><p>then dump log in json format.</p>
+</dd>
+<dt>Args:</dt><dd><dl>
+<dt>log_dict (dict):</dt><dd><p>This dict should record all the information obtained from class <cite>Strategy</cite></p>
+<ul class="simple">
+<li><p>mode: train/eval/test mode</p></li>
+<li><p>lr(training phase only): learning rate</p></li>
+<li><p>epoch(training phase only): current epoch</p></li>
+<li><p>iter(training phase only): current iter in the epoch</p></li>
+<li><p>time(training phase only): How much time the current iter consumed. This used for estimating eta(estimated time of arrival).</p></li>
+</ul>
+<p>If order args are included(including acc, loss or other evaluation metrics) in log_dict, they will be also recorded.</p>
+</dd>
+<dt>iters_per_epoch (int):</dt><dd><p>The number of iters in each epoch, used only in the training phase.</p>
+</dd>
+<dt>max_iters (int):</dt><dd><p>the total number of iters in the training phase, used for eta estimation in the training phase.</p>
+</dd>
+<dt>iter_count (int):</dt><dd><p>the rank of the current iter in the whole training phase, used for eta estimation in the training phase.</p>
+</dd>
+<dt>interval (int):</dt><dd><p>how many iters have been executed since the last time we perform logging,
+used for eta estimation in the training phase.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.timer">
+<span id="utils-timer-module"></span><h2>utils.timer module<a class="headerlink" href="#module-utils.timer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.timer.Timer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">utils.timer.</span></span><span class="sig-name descname"><span class="pre">Timer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_tmpl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/timer.html#Timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.timer.Timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A flexible Timer class.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="utils.timer.Timer.is_running">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_running</span></span><a class="headerlink" href="#utils.timer.Timer.is_running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether the timer is running</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(bool) Whether the timer is running</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.timer.Timer.since_last_check">
+<span class="sig-name descname"><span class="pre">since_last_check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/timer.html#Timer.since_last_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.timer.Timer.since_last_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time since the last checking.</p>
+<p>Either <a class="reference internal" href="#utils.timer.Timer.since_start" title="utils.timer.Timer.since_start"><code class="xref py py-func docutils literal notranslate"><span class="pre">since_start()</span></code></a> or <a class="reference internal" href="#utils.timer.Timer.since_last_check" title="utils.timer.Timer.since_last_check"><code class="xref py py-func docutils literal notranslate"><span class="pre">since_last_check()</span></code></a> is a checking
+operation.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(float) Time in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.timer.Timer.since_start">
+<span class="sig-name descname"><span class="pre">since_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/timer.html#Timer.since_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.timer.Timer.since_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total time since the timer is started.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>(float) Time in seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.timer.Timer.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/timer.html#Timer.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.timer.Timer.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the timer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="utils.timer.TimerError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">utils.timer.</span></span><span class="sig-name descname"><span class="pre">TimerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/timer.html#TimerError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.timer.TimerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.timer.check_time">
+<span class="sig-prename descclassname"><span class="pre">utils.timer.</span></span><span class="sig-name descname"><span class="pre">check_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timer_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/timer.html#check_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.timer.check_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add check points in a single line.</p>
+<p>This method is suitable for running a task on a list of items. A timer will
+be registered when the method is called for the first time.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>timer_id (str):</dt><dd><p>Timer identifier.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils.weight_init">
+<span id="utils-weight-init-module"></span><h2>utils.weight_init module<a class="headerlink" href="#module-utils.weight_init" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.weight_init.weight_init">
+<span class="sig-prename descclassname"><span class="pre">utils.weight_init.</span></span><span class="sig-name descname"><span class="pre">weight_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/weight_init.html#weight_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.weight_init.weight_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is for initialing model parameters.</p>
+<p>Modules of type <cite>nn.Conv1d</cite>, <cite>nn.Conv2d</cite>, <cite>nn.Conv3d</cite>,
+<cite>nn.ConvTranspose1d</cite>, <cite>nn.ConvTranspose2d</cite>, <cite>nn.ConvTranspose3d</cite>,
+<cite>nn.BatchNorm1d</cite>, <cite>nn.BatchNorm2d</cite>, <cite>nn.BatchNorm3d</cite>,
+<cite>nn.Linear</cite>, <cite>nn.LSTM</cite>, <cite>nn.LSTMCell</cite>, <cite>nn.GRU</cite>, <cite>nn.GRUCell</cite>
+will be initialized.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>m (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>):</dt><dd><p>The model to use</p>
+</dd>
+</dl>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">resnet18</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">weight_init</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

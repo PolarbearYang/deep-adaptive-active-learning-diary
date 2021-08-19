@@ -1,0 +1,606 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>query_strategies.strategy &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>query_strategies.strategy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for query_strategies.strategy</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">getpass</span> <span class="k">import</span> <span class="n">getuser</span>
+<span class="kn">from</span> <span class="nn">socket</span> <span class="k">import</span> <span class="n">gethostname</span>
+<span class="kn">from</span> <span class="nn">utils.progressbar</span> <span class="k">import</span> <span class="n">track_iter_progress</span>
+<span class="kn">from</span> <span class="nn">utils.text</span> <span class="k">import</span> <span class="n">TextLogger</span>
+<span class="kn">from</span> <span class="nn">utils.timer</span> <span class="k">import</span> <span class="n">Timer</span>
+<span class="kn">from</span> <span class="nn">utils.weight_init</span> <span class="k">import</span> <span class="n">weight_init</span>
+<span class="kn">import</span> <span class="nn">torch.utils.data.dataloader</span>
+<span class="kn">from</span> <span class="nn">.builder</span> <span class="k">import</span> <span class="n">STRATEGIES</span>
+
+
+<div class="viewcode-block" id="get_lr"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.get_lr">[docs]</a><span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="n">optimizer</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">param_group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">param_group</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Strategy"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy">[docs]</a><span class="nd">@STRATEGIES</span><span class="o">.</span><span class="n">register_module</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">Strategy</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The base class wrapping the training and querying procedure.</span>
+<span class="sd">    All new strategies should be inherited from this class.</span>
+
+<span class="sd">    Typically in a new strategy, we can just overload the `query` member function,</span>
+<span class="sd">    which returns the indices of queried samples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X: (Any)</span>
+<span class="sd">            Any form of raw data. It should be the `train` split of the dataset.</span>
+<span class="sd">        Y: (Any)</span>
+<span class="sd">            The labels of X.</span>
+<span class="sd">        idxs_lb: np.ndarray(bool)</span>
+<span class="sd">            An boolean array that has the same length with the `train` split of the dataset.</span>
+<span class="sd">        net: (class)</span>
+<span class="sd">            A net wrapper, with a `__call__` member that returns the model architecture,</span>
+<span class="sd">            its parameters are just the parameters of the model class,</span>
+<span class="sd">            arg `num_classes` is necessary.</span>
+<span class="sd">        handler: (torch.utils.data.Dataset)</span>
+<span class="sd">            Dataset wrappers designed for active learning, whose `__getitem__` returns (data, label, idx)</span>
+<span class="sd">        args: (dict)</span>
+<span class="sd">            Contains lots of information the strategy needs for training,</span>
+<span class="sd">            including the ones in the parser and some newly added ones.</span>
+<span class="sd">            Here we list some of them for detailed explanation.</span>
+
+<span class="sd">            - `work_dir`: (str) The working directory, in which we save checkpoints, log info, figures</span>
+<span class="sd">            - `save_freq`: (int) Save a checkpoint per `save_freq` epochs.</span>
+<span class="sd">            - `n_epoch`: (int) How many epochs are in one active round.</span>
+<span class="sd">            - `batch_size`: (int) Just the batch size of the dataloader.</span>
+<span class="sd">            - `num_workers`: (int) `num_workers` of the dataloader.</span>
+<span class="sd">            - `lr`: (float) Learning rate of the optimizer.</span>
+<span class="sd">            - `momentum`: (float) Momentum of the optimizer.</span>
+<span class="sd">            - `out_iter_freq`: (int) Print a log message per `out_iter_freq` iters.</span>
+<span class="sd">            - `num_classes`: (int) The number of classes in the dataset.</span>
+<span class="sd">            - `label2text`: (dict[int, str]) The class name corresponding to each label.</span>
+<span class="sd">            - `train_transform`: (:obj:`torchvision.transforms.Compose`)Transformation applied to the training data.</span>
+<span class="sd">            - `eval_transform`: (:obj:`torchvision.transforms.Compose`)Transformation applied to the eval/test data.</span>
+<span class="sd">            - `timestamp`: (str) The start timestamp of the process.</span>
+<span class="sd">            - `logger`: (:obj:`logging.RootLogger`) The logger to use.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">idxs_lb</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idxs_lb</span> <span class="o">=</span> <span class="n">idxs_lb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idxs_q</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">net</span>  <span class="c1"># This is a function that returns a model structure, not the model itself!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_pool</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+        <span class="n">use_cuda</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">use_cuda</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_classes&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">weight_init</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embed_dimension</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># The dimension of space to perform distance based strategies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_round</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TextLogger</span> <span class="o">=</span> <span class="n">TextLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">momentum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;momentum&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1"># This is for resume</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acc_list</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_labels_list</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Strategy.init_clf"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.init_clf">[docs]</a>    <span class="k">def</span> <span class="nf">init_clf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;When we want to initialize the model we use, apply this function.</span>
+<span class="sd">        Random parameter initialization is included.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_classes&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">weight_init</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Strategy.query"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Query new samples according the current model or some strategies.</span>
+
+<span class="sd">        :param n: (int)The number of samples to query.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[int]: The indices of queried samples.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="Strategy.update"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idxs_lb</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the labeled indexes.</span>
+
+<span class="sd">        :param idxs_lb: (np.ndrray[bool]) The new labeled indices.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idxs_lb</span> <span class="o">=</span> <span class="n">idxs_lb</span></div>
+
+    <span class="k">def</span> <span class="nf">_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader_tr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Represents one epoch.</span>
+
+<span class="sd">        :param loader_tr: (:obj:`torch.utils.data.DataLoader`) The training data wrapped in DataLoader.</span>
+
+<span class="sd">        Accuracy and loss in the each iter will be recorded.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">iter_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;out_iter_freq&#39;</span><span class="p">]</span>
+        <span class="n">loss_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">right_count_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">samples_per_batch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">idxs</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">loader_tr</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">e1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">right_count_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pred</span> <span class="o">==</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="n">samples_per_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">iter_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">since_last_check</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">iter_out</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">log_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span>   <span class="c1"># 训练模式</span>
+                    <span class="n">epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>   <span class="c1"># 当前是第几个epoch</span>
+                    <span class="nb">iter</span><span class="o">=</span><span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>   <span class="c1"># 当前是第几个iter</span>
+                    <span class="n">lr</span><span class="o">=</span><span class="n">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">),</span>   <span class="c1"># 获取当前optimizer的学习率</span>
+                    <span class="n">time</span><span class="o">=</span><span class="n">iter_time</span><span class="p">,</span>   <span class="c1"># 当前iter消耗的时间</span>
+                    <span class="n">acc</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">right_count_list</span><span class="p">[</span><span class="o">-</span><span class="n">iter_out</span><span class="p">:])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">samples_per_batch</span><span class="p">[</span><span class="o">-</span><span class="n">iter_out</span><span class="p">:]),</span>
+                    <span class="n">loss</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss_list</span><span class="p">[</span><span class="o">-</span><span class="n">iter_out</span><span class="p">:])</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">TextLogger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                    <span class="n">log_dict</span><span class="o">=</span><span class="n">log_dict</span><span class="p">,</span>
+                    <span class="n">iters_per_epoch</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">loader_tr</span><span class="p">),</span>
+                    <span class="n">iter_count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader_tr</span><span class="p">)</span> <span class="o">+</span> <span class="n">batch_idx</span><span class="p">,</span>
+                    <span class="n">max_iters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;n_epoch&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader_tr</span><span class="p">),</span>  <span class="c1"># 一个active round总共的epoch数量</span>
+                    <span class="n">interval</span><span class="o">=</span><span class="n">iter_out</span>   <span class="c1"># 多少个iter进行一次log</span>
+                <span class="p">)</span>
+
+<div class="viewcode-block" id="Strategy.train"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resumed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Represents one epoch.</span>
+
+<span class="sd">            :param resumed: (bool) A flag indicating whether to resume from an uncomplete task.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Start running, host: </span><span class="si">%s</span><span class="s1">, work_dir: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                         <span class="n">f</span><span class="s1">&#39;{getuser()}@{gethostname()}&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;work_dir&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;max: </span><span class="si">%d</span><span class="s1"> epochs&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;n_epoch&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">n_epoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;n_epoch&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">resumed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">],</span> <span class="n">momentum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;momentum&#39;</span><span class="p">])</span>
+        <span class="n">idxs_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_pool</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">idxs_lb</span><span class="p">]</span>
+        <span class="n">loader_tr</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idxs_train</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">idxs_train</span><span class="p">],</span>
+                                            <span class="n">transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;train_transform&#39;</span><span class="p">]),</span>
+                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span>
+                               <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">])</span>
+
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&lt;</span> <span class="n">n_epoch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">since_last_check</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train</span><span class="p">(</span><span class="n">loader_tr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;save_freq&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_for_resume</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Strategy.predict"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To predict the accuracy of some data split.</span>
+<span class="sd">        We typically input the raw data of eval/test split here.</span>
+
+<span class="sd">            :param X: (Any) Any sort of raw data.</span>
+<span class="sd">            :param Y: (Any) Labels corresponding to X.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                torch.Tensor: The output label corresponding to each sample.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loader_te</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;eval_transform&#39;</span><span class="p">]),</span>
+                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span>
+                               <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">Y</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">idxs</span> <span class="ow">in</span> <span class="n">track_iter_progress</span><span class="p">(</span><span class="n">loader_te</span><span class="p">):</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">out</span><span class="p">,</span> <span class="n">e1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+                <span class="n">pred</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">P</span><span class="p">[</span><span class="n">idxs</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">P</span></div>
+
+<div class="viewcode-block" id="Strategy.predict_eval"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.predict_eval">[docs]</a>    <span class="k">def</span> <span class="nf">predict_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;val&#39;</span><span class="p">,</span> <span class="n">rd</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To get the predicted accuracy of the current data split.</span>
+<span class="sd">        We typically input the raw data of eval/test split here.</span>
+
+<span class="sd">            :param X: (Any) Any sort of raw data.</span>
+<span class="sd">            :param Y: (Any) Labels corresponding to X.</span>
+<span class="sd">            :param mode: (str) Choose `val` or `test`, in mode `val`, the number of active round will be recorded.</span>
+<span class="sd">            :param rd: (int) The current active round.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                float: The output label corresponding to each sample.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span> <span class="o">==</span> <span class="n">P</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span>
+            <span class="n">log_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                <span class="n">active_round</span><span class="o">=</span><span class="n">rd</span><span class="p">,</span>
+                <span class="n">acc</span><span class="o">=</span><span class="n">acc</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                <span class="n">acc</span><span class="o">=</span><span class="n">acc</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TextLogger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">log_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">acc</span></div>
+
+<div class="viewcode-block" id="Strategy.predict_prob"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.predict_prob">[docs]</a>    <span class="k">def</span> <span class="nf">predict_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To get the output probability distribution of the current data split.</span>
+
+<span class="sd">            :param X: (Any) Any sort of raw data.</span>
+<span class="sd">            :param Y: (Any) Labels corresponding to X.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                torch.Tensor: output probability distribution of all samples in the current data split</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loader_te</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;eval_transform&#39;</span><span class="p">]),</span>
+                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span>
+                               <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Y</span><span class="p">))])</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">idxs</span> <span class="ow">in</span> <span class="n">track_iter_progress</span><span class="p">(</span><span class="n">loader_te</span><span class="p">):</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">out</span><span class="p">,</span> <span class="n">e1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">probs</span><span class="p">[</span><span class="n">idxs</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">probs</span></div>
+
+<div class="viewcode-block" id="Strategy.predict_prob_dropout"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.predict_prob_dropout">[docs]</a>    <span class="k">def</span> <span class="nf">predict_prob_dropout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">n_drop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To get the output probability distribution of the current data split.</span>
+<span class="sd">        Output the average of all dropout versions.</span>
+
+<span class="sd">            :param X: (Any) Any sort of raw data.</span>
+<span class="sd">            :param Y: (Any) Labels corresponding to X.</span>
+<span class="sd">            :param n_drop: (int) The number of times to perform dropout(Only available when there is :obj:`torch.nn.Dropout` module in the model).</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                torch.Tensor: output probability distribution of all samples in the current data split.</span>
+<span class="sd">                Actually we output the average distribution of all dropout versions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loader_te</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;eval_transform&#39;</span><span class="p">]),</span>
+                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span>
+                               <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Y</span><span class="p">))])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_drop</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;n_drop </span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_drop</span><span class="p">))</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">idxs</span> <span class="ow">in</span> <span class="n">track_iter_progress</span><span class="p">(</span><span class="n">loader_te</span><span class="p">):</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                    <span class="n">out</span><span class="p">,</span> <span class="n">e1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                    <span class="n">prob</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">probs</span><span class="p">[</span><span class="n">idxs</span><span class="p">]</span> <span class="o">+=</span> <span class="n">prob</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        <span class="n">probs</span> <span class="o">/=</span> <span class="n">n_drop</span>
+        
+        <span class="k">return</span> <span class="n">probs</span></div>
+
+<div class="viewcode-block" id="Strategy.predict_prob_dropout_split"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.predict_prob_dropout_split">[docs]</a>    <span class="k">def</span> <span class="nf">predict_prob_dropout_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">n_drop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To get the output probability distribution of the current data split.</span>
+<span class="sd">        All dropout versions will be recorded.</span>
+
+<span class="sd">            :param X: (Any) Any sort of raw data.</span>
+<span class="sd">            :param Y: (Any) Labels corresponding to X.</span>
+<span class="sd">            :param n_drop: (int) The number of times to perform dropout(Only available when there is :obj:`torch.nn.Dropout` module in the model).</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                torch.Tensor: output probability distribution of all samples in the current data split.</span>
+<span class="sd">                Actually we output distributions of all dropout versions in a 3-dimensional tensor.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loader_te</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;eval_transform&#39;</span><span class="p">]),</span>
+                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span>
+                               <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_drop</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Y</span><span class="p">))])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_drop</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;n_drop </span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_drop</span><span class="p">))</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">idxs</span> <span class="ow">in</span> <span class="n">track_iter_progress</span><span class="p">(</span><span class="n">loader_te</span><span class="p">):</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                    <span class="n">out</span><span class="p">,</span> <span class="n">e1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                    <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">idxs</span><span class="p">]</span> <span class="o">+=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">probs</span></div>
+
+<div class="viewcode-block" id="Strategy.get_embedding"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.get_embedding">[docs]</a>    <span class="k">def</span> <span class="nf">get_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To get the feature embedding of the current data split.</span>
+
+<span class="sd">            :param X: (Any) Any sort of raw data.</span>
+<span class="sd">            :param Y: (Any) Labels corresponding to X.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                torch.Tensor: The feature embedding of all samples in the current data split.</span>
+<span class="sd">                Actually we output distributions of all dropout versions in a 3-dimensional tensor.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loader_te</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;eval_transform&#39;</span><span class="p">]),</span>
+                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span>
+                               <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">embedding_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">idxs</span> <span class="ow">in</span> <span class="n">track_iter_progress</span><span class="p">(</span><span class="n">loader_te</span><span class="p">):</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">out</span><span class="p">,</span> <span class="n">e1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">embedding_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">embedding_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">embedding</span></div>
+
+<div class="viewcode-block" id="Strategy.save"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the current model parameters.&quot;&quot;&quot;</span>
+        <span class="n">model_out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;work_dir&#39;</span><span class="p">],</span> <span class="n">f</span><span class="s1">&#39;active_round_</span><span class="si">{self.active_round}</span><span class="s1">&#39;</span><span class="p">))</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model_out_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">model_out_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+        <span class="n">save_target</span> <span class="o">=</span> <span class="n">model_out_path</span> <span class="o">/</span> <span class="n">f</span><span class="s2">&quot;active_round_</span><span class="si">{self.active_round}</span><span class="s2">-&quot;</span> \
+                                       <span class="n">f</span><span class="s2">&quot;label_num_{np.sum(self.idxs_lb).item()}-epoch_</span><span class="si">{self.epoch}</span><span class="s2">.pth&quot;</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">save_target</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;==&gt; save model to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">save_target</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Strategy.save_for_resume"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.save_for_resume">[docs]</a>    <span class="k">def</span> <span class="nf">save_for_resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the all the information for resuming</span>
+<span class="sd">        (Deal with the case when the procedure unexpectly terminates.)&quot;&quot;&quot;</span>
+        <span class="n">model_out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;work_dir&#39;</span><span class="p">])</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;active_round&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_round</span><span class="p">,</span>
+            <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
+            <span class="s2">&quot;optimizer_param_groups&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span>
+            <span class="s2">&quot;idxs_lb&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idxs_lb</span><span class="p">,</span>
+            <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;acc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">acc_list</span><span class="p">,</span>
+            <span class="s2">&quot;num_labels&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_labels_list</span>
+        <span class="p">}</span>
+        <span class="n">save_target</span> <span class="o">=</span> <span class="n">model_out_path</span> <span class="o">/</span> <span class="n">f</span><span class="s2">&quot;latest.pth&quot;</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">save_target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Saving Checkpoint at active round </span><span class="si">{self.active_round}</span><span class="s1">&#39;</span>
+                         <span class="n">f</span><span class="s1">&#39;, epoch </span><span class="si">{self.epoch}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Strategy.resume"><a class="viewcode-back" href="../../source/query_strategies.html#query_strategies.strategy.Strategy.resume">[docs]</a>    <span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Resume from the last checkpoint.&quot;&quot;&quot;</span>
+        <span class="n">model_save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;work_dir&#39;</span><span class="p">])</span>
+        <span class="n">load_target</span> <span class="o">=</span> <span class="n">model_save_path</span> <span class="o">/</span> <span class="n">f</span><span class="s2">&quot;latest.pth&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">load_target</span><span class="p">):</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">load_target</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_round</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;active_round&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idxs_lb</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;idxs_lb&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;weight&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;optimizer_param_groups&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TextLogger</span><span class="o">.</span><span class="n">start_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idxs_lb</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Resume from checkpoint at active round </span><span class="si">{self.active_round}</span><span class="s1">&#39;</span>
+                             <span class="n">f</span><span class="s1">&#39;, epoch </span><span class="si">{self.epoch}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_round</span><span class="p">,</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;acc&quot;</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;num_labels&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training from the beginning!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

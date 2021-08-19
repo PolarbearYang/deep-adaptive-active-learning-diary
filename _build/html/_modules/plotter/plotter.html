@@ -1,0 +1,568 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>plotter.plotter &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>plotter.plotter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for plotter.plotter</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">query_strategies</span> <span class="k">import</span> <span class="n">strategy</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.progressbar</span> <span class="k">import</span> <span class="n">track_iter_progress</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">get_bins</span>
+<span class="kn">import</span> <span class="nn">umap</span>
+<span class="kn">from</span> <span class="nn">.cluster</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.bar</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;plotter&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="plotter"><a class="viewcode-back" href="../../source/plotter.html#plotter.plotter.plotter">[docs]</a><span class="k">class</span> <span class="nc">plotter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class used for plotting all information in an active round.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: (:obj:`query_strategies.strategy`)</span>
+<span class="sd">                The strategy used in the task.</span>
+<span class="sd">                The class :obj:`strategy` provides all information the plotter needs.</span>
+<span class="sd">            dconfig: (dict)</span>
+<span class="sd">                This should provide all data (train/eval/test) in raw data format:</span>
+
+<span class="sd">                - &#39;train&#39;: {&#39;X&#39;: X_train, &#39;Y&#39;: Y_train},</span>
+<span class="sd">                - &#39;eval&#39;: {&#39;X&#39;: X_eval, &#39;Y&#39;: Y_eval},</span>
+<span class="sd">                - &#39;test&#39;: {&#39;X&#39;: X_test, &#39;Y&#39;: Y_test}}</span>
+
+<span class="sd">                New information will be updated in this dict when plotting.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">dconfig</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runner</span> <span class="o">=</span> <span class="n">runner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotter Initializing...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span> <span class="o">=</span> <span class="n">dconfig</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_classes&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+        <span class="c1"># self.outer_params = outer_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_init_dinfo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_split_predicted_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;work_dir&#39;</span><span class="p">],</span>
+                                      <span class="n">f</span><span class="s1">&#39;active_round_</span><span class="si">{runner.active_round}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;figures&#39;</span><span class="p">)</span>
+        <span class="c1"># 将范围划分为20个区域的函数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_bins</span> <span class="o">=</span> <span class="n">get_bins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Plotter Initialization Done!&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_init_dinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performed when initializing the class.</span>
+<span class="sd">           Now it generates the following information (for train/eval/test mode):</span>
+
+<span class="sd">           - pseudo: Model output of all samples in the last layer</span>
+<span class="sd">           - entropy: The entropy of all samples corresponding to pseudo</span>
+<span class="sd">           - features: The feature of all samples extracted by the model</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;eval&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]:</span>
+            <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;X&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span>
+                                                    <span class="n">transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;eval_transform&#39;</span><span class="p">]),</span>
+                                <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span>
+                                <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">])</span>
+            <span class="n">entropy_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">pseudo_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># This step is for getting pseudo and entropy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Getting pseudo output and entropy...&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">track_iter_progress</span><span class="p">(</span><span class="n">loader</span><span class="p">)):</span>  <span class="c1"># 这里的data由(图像,标签)组成</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                    <span class="n">logits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">with_feature</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+                    <span class="n">softmax</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">norm_output</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">)</span>
+                    <span class="n">pseudo_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">norm_output</span><span class="p">)</span>
+                    <span class="n">entropy_batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">entropy</span><span class="p">(</span><span class="n">norm_output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+                    <span class="n">entropy_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entropy_batch</span><span class="p">)</span>
+            <span class="n">pseudo_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">pseudo_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 指的是模型产生的软标签，而非真实标签</span>
+            <span class="n">entropy_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">entropy_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 每个样本的entropy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;pseudo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pseudo_out</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy_out</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+            <span class="c1"># This step is for getting features</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Getting features...&quot;</span><span class="p">)</span>
+            <span class="n">feature_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">track_iter_progress</span><span class="p">(</span><span class="n">loader</span><span class="p">)):</span>  <span class="c1"># 这里的data由(图像,标签)组成</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">with_feature</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+                    <span class="n">feature_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+            <span class="n">features_out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">feature_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">features_out</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_split_predicted_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performed when initializing the class.</span>
+<span class="sd">           It will count the number of correctly labeled samples and the number of mislabeled samples in all 3 modes.</span>
+<span class="sd">           Now it generates the following information (for train/eval/test mode):</span>
+
+<span class="sd">           - entropy_list_correct: the entropy of all correctly labeled samples</span>
+<span class="sd">           - entropy_list_incorrect: The entropy of all mislabeled samples</span>
+<span class="sd">           - entropy_rank_list_correct: the ranking score corresponding to the entropy of all correctly labeled samples</span>
+<span class="sd">           - entropy_rank_list_incorrect: the ranking score corresponding to the entropy of all mislabeled samples</span>
+<span class="sd">           - idx_list_correct: the indices of all correctly labeled samples(corresponding to entropy_list_correct)</span>
+<span class="sd">           - idx_list_incorrect: the indices of all mislabeled samples(corresponding to entropy_list_incorrect)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;eval&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]:</span>
+            <span class="n">entropy_rank_list_correct</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">entropy_rank_list_incorrect</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">idx_list_correct</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">idx_list_incorrect</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">entropy_list_correct</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">entropy_list_incorrect</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">entropy_rank_out</span> <span class="o">=</span> <span class="n">get_rank_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy&#39;</span><span class="p">])</span>
+            <span class="n">max_probs</span><span class="p">,</span> <span class="n">max_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;pseudo&#39;</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gt_label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">max_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">gt_label</span><span class="p">:</span>
+                    <span class="n">entropy_rank_list_correct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entropy_rank_out</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">entropy_list_correct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">idx_list_correct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">entropy_rank_list_incorrect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entropy_rank_out</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">entropy_list_incorrect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">idx_list_incorrect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Mislabeled cnt: {len(entropy_list_incorrect)} in </span><span class="si">{mode}</span><span class="s1"> set.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Correctly labeled cnt: {len(entropy_list_correct)} in </span><span class="si">{mode}</span><span class="s1"> set.&#39;</span><span class="p">)</span>
+
+            <span class="n">entropy_list_correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">entropy_list_correct</span><span class="p">)</span>
+            <span class="n">entropy_list_incorrect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">entropy_list_incorrect</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_list_correct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy_list_correct</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_list_incorrect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy_list_incorrect</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_rank_list_correct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy_rank_list_correct</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_rank_list_incorrect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy_rank_list_incorrect</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_correct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx_list_correct</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx_list_incorrect</span>
+
+<div class="viewcode-block" id="plotter.bar_by_class"><a class="viewcode-back" href="../../source/plotter.html#plotter.plotter.plotter.bar_by_class">[docs]</a>    <span class="k">def</span> <span class="nf">bar_by_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plot the all kinds of bar plot, which includes:</span>
+
+<span class="sd">        - The number of samples corresponding to different entropy levels.</span>
+<span class="sd">        - The number of samples corresponding to different entropy levels(by rank).</span>
+<span class="sd">        - The number of correctly labeled samples and mislabeled samples by the model in each class.</span>
+<span class="sd">        - The number of mislabeled samples by the model in each class.</span>
+<span class="sd">        - The number of labeled samples in the current training pool in each class.</span>
+<span class="sd">        - The number of queried samples in the current round in each class.</span>
+
+<span class="sd">        :param mode: (str) Which data split we are using. Choose one from `train`, `eval`, `test`.</span>
+
+<span class="sd">        - In the arg `mode`:</span>
+<span class="sd">            - `train` means we are using the `train` split dataset.</span>
+<span class="sd">                - Information related to query/label&amp;unlabel are only available in this part.</span>
+<span class="sd">            - `eval`/`test` means we are using `eval`/`test` split in the dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o777</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># 标签数字到对应类名称的映射</span>
+        <span class="n">label2text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;label2text&#39;</span><span class="p">]</span>
+        <span class="c1"># 逐类统计</span>
+        <span class="n">correct_by_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label2text</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">incorrect_by_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label2text</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">text_by_class</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">label2text</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="c1"># 查看错误样本/正确样本的标注</span>
+        <span class="n">Y_correct_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_correct&#39;</span><span class="p">]]</span>
+        <span class="n">Y_incorrect_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label2text</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">correct_by_class</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Y_correct_temp</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">incorrect_by_class</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Y_incorrect_temp</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="n">bar_width</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># 条形宽度</span>
+        <span class="n">index_correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">text_by_class</span><span class="p">))</span>  <span class="c1"># 正确样本条形图的横坐标</span>
+        <span class="n">index_incorrect</span> <span class="o">=</span> <span class="n">index_correct</span> <span class="o">+</span> <span class="n">bar_width</span>  <span class="c1"># 错误条形图的横坐标</span>
+
+        <span class="c1"># Number of samples corresponding to different entropy levels</span>
+        <span class="n">bar_by_entropy</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_list_correct&#39;</span><span class="p">],</span>
+                       <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_list_incorrect&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bins</span><span class="p">)</span>
+        <span class="n">bar_by_rank_entropy</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_rank_list_correct&#39;</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;entropy_rank_list_incorrect&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bins</span><span class="p">)</span>
+
+        <span class="c1"># CORRECT AND INCORRECT NUM BY CLASS TOGETHER</span>
+        <span class="n">bar_correct_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index_correct</span><span class="p">,</span> <span class="n">index_incorrect</span><span class="p">,</span>
+                                       <span class="n">correct_by_class</span><span class="p">,</span> <span class="n">incorrect_by_class</span><span class="p">,</span>
+                                       <span class="n">bar_width</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">)</span>
+        <span class="c1"># INCORRECT NUM BY CLASS</span>
+        <span class="n">bar_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">,</span> <span class="n">incorrect_by_class</span><span class="p">)</span>
+
+        <span class="c1"># 查看标注样本的标注</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;train&#39;</span><span class="p">:</span>
+            <span class="c1"># LABELED NUM BY CLASS</span>
+            <span class="n">bar_labeled_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">label2text</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">idxs_lb</span><span class="p">)</span>
+            <span class="c1"># QUERIED NUM BY CLASS</span>
+            <span class="n">queried_by_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label2text</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">queried_correct_by_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label2text</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">queried_incorrect_by_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label2text</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">queried_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">idxs_q</span><span class="p">]</span>
+            <span class="n">queried_correct_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">][</span>
+                <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">idxs_q</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_correct&#39;</span><span class="p">])))]</span>
+            <span class="n">queried_incorrect_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">][</span>
+                <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">idxs_q</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">])))]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label2text</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">queried_by_class</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">queried_temp</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="n">queried_correct_by_class</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">queried_correct_temp</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="n">queried_incorrect_by_class</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">queried_incorrect_temp</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">bar_queried_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">queried_by_class</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">)</span>
+            <span class="n">bar_queried_correct_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index_correct</span><span class="p">,</span> <span class="n">index_incorrect</span><span class="p">,</span>
+                                                   <span class="n">queried_correct_by_class</span><span class="p">,</span> <span class="n">queried_incorrect_by_class</span><span class="p">,</span>
+                                                   <span class="n">text_by_class</span><span class="p">,</span> <span class="n">bar_width</span><span class="p">)</span>
+            <span class="n">bar_queried_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">queried_incorrect_by_class</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plotter.classification_with_cluster"><a class="viewcode-back" href="../../source/plotter.html#plotter.plotter.plotter.classification_with_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">classification_with_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">use_predefined</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plot the all kinds of figures with features embedded into a 2D space:</span>
+
+<span class="sd">        - The current distribution of correctly classified and misclassified samples in 2D space</span>
+<span class="sd">        - The current distribution of samples with sample-wise specified values: e.g. entropy, acquisition score, weight</span>
+<span class="sd">        - The current labeled and unlabeled samples in 2D space</span>
+<span class="sd">        - The current distribution of queried samples in 2D space</span>
+<span class="sd">        - The current distribution embedding in 2D space</span>
+
+<span class="sd">        :param method: (str) The dimension reduction method we choose. Choose one from `raw`, `tsne`, `umap`.</span>
+<span class="sd">        :param mode: (str) Which data split we are using. Choose one from `train`, `eval`, `test`.</span>
+<span class="sd">        :param use_predefined: (bool) Whether to use predefined 2D results to represent the distribution. This is only available in `train` mode.</span>
+
+<span class="sd">        - In the arg `method`:</span>
+<span class="sd">            - `raw` means the given data are already two-dimensional, no reduction method will be applied</span>
+<span class="sd">            - `tsne` means the data will be reduced to 2-D space using :obj:`sklearn.manifold.TSNE`</span>
+<span class="sd">            - `umap` means the data will be reduced to 2-D space using :obj:`umap.UMAP`</span>
+<span class="sd">        - In the arg `mode`:</span>
+<span class="sd">            - `train` means we are using the `train` split dataset.</span>
+<span class="sd">                - Cluster methods related to query/label&amp;unlabel are only available in this part.</span>
+<span class="sd">            - `eval`/`test` means we are using `eval`/`test` split in the dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 这个尽量在使用默认训练的模型时使用，更容易显示出错误分布的位置</span>
+        <span class="k">assert</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="s1">&#39;tsne&#39;</span><span class="p">,</span> <span class="s1">&#39;umap&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">use_predefined</span><span class="p">:</span>
+            <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="s1">&#39;with_predefined&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o777</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;raw&#39;</span><span class="p">:</span>
+            <span class="n">X_embedded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;X&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;tsne&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_using_predefined&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;train&#39;</span> <span class="ow">and</span> <span class="n">use_predefined</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_preload_path&#39;</span><span class="p">]):</span>
+                    <span class="n">X_embedded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_preload_path&#39;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;TSNE Embedding loaded from &quot;</span>
+                                                    <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.runner.args[&#39;plot_preload_path&#39;]}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;preload path does not exist! Skip plotting!&quot;</span><span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;tsne_embedded_</span><span class="si">{mode}</span><span class="s1">.npy&#39;</span><span class="p">)):</span>
+                <span class="n">X_embedded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;tsne_embedded_</span><span class="si">{mode}</span><span class="s1">.npy&#39;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;TSNE Embedding loaded from &quot;</span>
+                                                <span class="n">f</span><span class="s2">&quot;{os.path.join(self.save_path, f&#39;tsne_embedded_</span><span class="si">{mode}</span><span class="s2">.npy&#39;)}&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">X_embedded</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2021</span><span class="p">)</span>\
+                    <span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;tsne_embedded_</span><span class="si">{mode}</span><span class="s1">.npy&#39;</span><span class="p">),</span> <span class="n">X_embedded</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;TSNE Embedding saved to &quot;</span>
+                                                <span class="n">f</span><span class="s2">&quot;{os.path.join(self.save_path, f&#39;tsne_embedded_</span><span class="si">{mode}</span><span class="s2">.npy&#39;)}!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;umap&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_using_predefined&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;train&#39;</span> <span class="ow">and</span> <span class="n">use_predefined</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_preload_path&#39;</span><span class="p">]):</span>
+                    <span class="n">X_embedded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_preload_path&#39;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;UMAP Embedding loaded from &quot;</span>
+                                                    <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.runner.args[&#39;plot_preload_path&#39;]}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;preload path does not exist! Skip plotting!&quot;</span><span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;umap_embedded_</span><span class="si">{mode}</span><span class="s1">.npy&#39;</span><span class="p">)):</span>
+                <span class="n">X_embedded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;umap_embedded_</span><span class="si">{mode}</span><span class="s1">.npy&#39;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;UMAP Embedding loaded from &quot;</span>
+                                                <span class="n">f</span><span class="s2">&quot;{os.path.join(self.save_path, f&#39;umap_embedded_</span><span class="si">{mode}</span><span class="s2">.npy&#39;)}&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">X_embedded</span> <span class="o">=</span> <span class="n">umap</span><span class="o">.</span><span class="n">UMAP</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">2021</span><span class="p">)</span>\
+                    <span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;umap_embedded_</span><span class="si">{mode}</span><span class="s1">.npy&#39;</span><span class="p">),</span> <span class="n">X_embedded</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;UMAP Embedding saved to &quot;</span>
+                                                <span class="n">f</span><span class="s2">&quot;{os.path.join(self.save_path, f&#39;umap_embedded_</span><span class="si">{mode}</span><span class="s2">.npy&#39;)}!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 按照类别进行绘画，同一个类别使用同一种颜色</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]:</span>
+            <span class="n">style</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">style</span><span class="p">)</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_correct&#39;</span><span class="p">],</span> <span class="n">indices</span><span class="p">])</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">rc</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">11.7</span><span class="p">,</span> <span class="mf">8.27</span><span class="p">)})</span>
+
+        <span class="c1"># Plot the distribution obtained by the current model with embedding</span>
+        <span class="n">cluster_with_embedding</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_classes&#39;</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">,</span>
+                               <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;label2text&#39;</span><span class="p">][</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span>
+                                         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">][</span><span class="n">indices</span><span class="p">]]),</span>
+                               <span class="n">indices</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 按照对错进行绘画（主要用于预训练参数拟合得很好的时候）</span>
+        <span class="n">cluster_with_correct_or_not</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_correct&#39;</span><span class="p">],</span>
+                                    <span class="n">indices</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 按照ENTROPY绘画，ENTROPY越大颜色越深</span>
+        <span class="c1"># 这个entropy超级慢! 是for循环的问题!</span>
+        <span class="c1"># 本来是想看每个样本的entropy/得分/软加权等信息，现在这一步暂且跳过，有待优化</span>
+        <span class="c1"># cluster_with_value(save_path, &#39;entropy&#39;, self.dconfig[mode][&#39;entropy&#39;],</span>
+        <span class="c1">#                    X_embedded, indices, method=&#39;tsne&#39;)</span>
+
+        <span class="c1"># 再按照是否标注进行绘画（主要用来看标注样本相对于整个集合的分布）</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;train&#39;</span><span class="p">:</span>
+            <span class="n">cluster_with_lab_unlab</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">idxs_lb</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+            <span class="n">cluster_with_query</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;num_classes&#39;</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">idxs_q</span><span class="p">,</span>
+                               <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;label2text&#39;</span><span class="p">][</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span>
+                                         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">][</span><span class="n">indices</span><span class="p">]]),</span> <span class="n">indices</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plotter.check_inconsistency"><a class="viewcode-back" href="../../source/plotter.html#plotter.plotter.plotter.check_inconsistency">[docs]</a>    <span class="k">def</span> <span class="nf">check_inconsistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plotter_B</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compare the information with the last active round(specified by another plotter).</span>
+
+<span class="sd">            :param plotter_B: Another plotter of the same class :obj:`plotter.plotter`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">joint_union_info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;eval&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]:</span>
+            <span class="n">joint_union_info</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">incorrect_data_union</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">])</span>\
+                <span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">plotter_B</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]))</span>
+            <span class="n">incorrect_data_joint</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">])</span>\
+                <span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">plotter_B</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]))</span>
+
+            <span class="n">idx_list_incorrect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]</span>
+            <span class="n">plotter_b_idx_list_incorrect</span> <span class="o">=</span> <span class="n">plotter_B</span><span class="o">.</span><span class="n">dconfig</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;idx_list_incorrect&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="n">f</span><span class="s1">&#39;Inconsistency Info in </span><span class="si">{mode}</span><span class="s1"> part:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">f</span><span class="s1">&#39;Number of Mislabeled data in the last active round: {len(set(idx_list_incorrect))}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">f</span><span class="s1">&#39;Number of Mislabeled data in the current active round: {len(set(plotter_b_idx_list_incorrect))}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">f</span><span class="s1">&#39;Union: {len(incorrect_data_union)}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">f</span><span class="s1">&#39;Intersection: {len(incorrect_data_joint)}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">joint_union_info</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;incorrect_data_joint&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">incorrect_data_joint</span>
+            <span class="n">joint_union_info</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;incorrect_data_union&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">incorrect_data_union</span>
+
+        <span class="k">return</span> <span class="n">joint_union_info</span></div>
+
+<div class="viewcode-block" id="plotter.visualization"><a class="viewcode-back" href="../../source/plotter.html#plotter.plotter.plotter.visualization">[docs]</a>    <span class="k">def</span> <span class="nf">visualization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plot all figures in train/eval/test split of the dataset.</span>
+<span class="sd">           See details in member function `bar_by_class` and `classification_with_cluster`.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bar_by_class</span><span class="p">(</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bar_by_class</span><span class="p">(</span><span class="s1">&#39;eval&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bar_by_class</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_using_predefined&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">classification_with_cluster</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_mode&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">use_predefined</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classification_with_cluster</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_mode&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classification_with_cluster</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_mode&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;eval&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classification_with_cluster</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;plot_mode&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

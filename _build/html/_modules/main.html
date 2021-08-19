@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>main &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>main</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datasets.builder</span> <span class="k">import</span> <span class="n">DATASETS</span>
+<span class="kn">from</span> <span class="nn">architectures.builder</span> <span class="k">import</span> <span class="n">MODELS</span>
+<span class="kn">from</span> <span class="nn">query_strategies.builder</span> <span class="k">import</span> <span class="n">STRATEGIES</span>
+<span class="kn">from</span> <span class="nn">utils.config</span> <span class="k">import</span> <span class="n">parse_commandline_args</span>
+<span class="kn">from</span> <span class="nn">utils.logger</span> <span class="k">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">utils.collect_env</span> <span class="k">import</span> <span class="n">collect_env</span>
+<span class="kn">from</span> <span class="nn">utils.timer</span> <span class="k">import</span> <span class="n">Timer</span>
+<span class="kn">from</span> <span class="nn">plotter.plotter</span> <span class="k">import</span> <span class="n">plotter</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="set_seed"><a class="viewcode-back" href="../source/main.html#main.set_seed">[docs]</a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;If the seed is specified, the process will be deterministic.</span>
+
+<span class="sd">    :param seed: the seed you wanna set</span>
+<span class="sd">    :return: None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># 为CPU设置种子用于生成随机数，以使得结果是确定的</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># 为当前GPU设置随机种子；</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># 如果使用多个GPU，为所有的GPU设置种子。</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># CPU和GPU结果一致</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../source/main.html#main.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid1</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)[:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">resumed</span> <span class="o">=</span> <span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">work_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">work_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span>
+                                       <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span>
+                                                            <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M&quot;</span><span class="p">),</span> <span class="n">uid</span><span class="p">))</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o777</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H%M%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+    <span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{timestamp}</span><span class="s1">.log&#39;</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;DAL&#39;</span><span class="p">,</span> <span class="n">log_file</span><span class="o">=</span><span class="n">log_file</span><span class="p">)</span>
+    <span class="n">env_info_dict</span> <span class="o">=</span> <span class="n">collect_env</span><span class="p">()</span>
+    <span class="n">env_info</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{k}</span><span class="s1">: </span><span class="si">{v}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">env_info_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+    <span class="n">dash_line</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Environment info:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">dash_line</span> <span class="o">+</span> <span class="n">env_info</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                <span class="n">dash_line</span><span class="p">)</span>
+    <span class="c1"># set seed</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">set_seed</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># To make the process deterministic</span>
+
+    <span class="c1"># load dataset</span>
+    <span class="n">dataset_wrapper</span> <span class="o">=</span> <span class="n">DATASETS</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">dataset</span><span class="p">))</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">X_eval</span><span class="p">,</span> <span class="n">Y_eval</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span>\
+        <span class="n">num_classes</span><span class="p">,</span> <span class="n">label2text</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">transforms_wrapper</span> <span class="o">=</span> <span class="n">dataset_wrapper</span><span class="p">()</span>
+
+    <span class="c1"># start experiment</span>
+    <span class="n">n_pool</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_train</span><span class="p">)</span>
+    <span class="n">n_eval</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_eval</span><span class="p">)</span>
+    <span class="n">n_test</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_test</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;cardinality of initial labeled pool: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">num_init_labels</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;cardinality of initial unlabeled pool: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_pool</span> <span class="o">-</span> <span class="n">config</span><span class="o">.</span><span class="n">num_init_labels</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;cardinality of initial evaluation pool: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_eval</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;cardinality of initial test pool: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_test</span><span class="p">))</span>
+
+    <span class="c1"># generate initial labeled pool</span>
+    <span class="n">idxs_lb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_pool</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">idxs_tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_pool</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idxs_tmp</span><span class="p">)</span>
+    <span class="n">idxs_lb</span><span class="p">[</span><span class="n">idxs_tmp</span><span class="p">[:</span><span class="n">config</span><span class="o">.</span><span class="n">num_init_labels</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># load network</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model</span><span class="p">))</span>
+    <span class="n">dict_config</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">init_dict_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;meta&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dict_config</span><span class="p">))</span>
+    <span class="n">dict_config</span><span class="p">[</span><span class="s1">&#39;num_classes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_classes</span>
+    <span class="n">dict_config</span><span class="p">[</span><span class="s1">&#39;label2text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label2text</span>
+    <span class="n">train_transform</span><span class="p">,</span> <span class="n">eval_transform</span> <span class="o">=</span> <span class="n">transforms_wrapper</span><span class="p">()</span>
+    <span class="n">dict_config</span><span class="p">[</span><span class="s1">&#39;train_transform&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_transform</span>
+    <span class="n">dict_config</span><span class="p">[</span><span class="s1">&#39;eval_transform&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_transform</span>
+    <span class="n">dict_config</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestamp</span>
+    <span class="n">dict_config</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logger</span>
+    <span class="n">strategy</span> <span class="o">=</span> <span class="n">STRATEGIES</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span>
+                                     <span class="n">X</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y_train</span><span class="p">,</span> <span class="n">idxs_lb</span><span class="o">=</span><span class="n">idxs_lb</span><span class="p">,</span>
+                                     <span class="n">net</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">handler</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">dict_config</span><span class="p">))</span>
+    <span class="n">strategy</span><span class="o">.</span><span class="n">TextLogger</span><span class="o">.</span><span class="n">_dump_log</span><span class="p">(</span><span class="n">init_dict_config</span><span class="p">)</span>
+
+    <span class="c1"># albl_list = [MarginSampling(X_tr, Y_tr, idxs_lb, net, handler, args),</span>
+    <span class="c1">#              KMeansSampling(X_tr, Y_tr, idxs_lb, net, handler, args)]</span>
+    <span class="c1"># strategy = ActiveLearningByLearning(X_tr, Y_tr, idxs_lb, net, handler, args, strategy_list=albl_list, delta=0.1)</span>
+
+    <span class="c1"># print info</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Dataset: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dataset</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Seed </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">seed</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Strategy: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">load_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">strategy</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">load_path</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Get pretrained parameters from </span><span class="si">{config.load_path}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">rounds</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">num_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">rounds</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">strategy</span><span class="o">.</span><span class="n">acc_list</span> <span class="o">=</span> <span class="n">acc</span>
+    <span class="n">strategy</span><span class="o">.</span><span class="n">num_labels_list</span> <span class="o">=</span> <span class="n">num_labels</span>
+    <span class="n">plotter_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dconfig</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="n">X_train</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y_train</span><span class="p">},</span>
+        <span class="s1">&#39;eval&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="n">X_eval</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y_eval</span><span class="p">},</span>
+        <span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="n">X_test</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y_test</span><span class="p">}}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">resumed</span> <span class="ow">or</span> <span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">resumed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">rd</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rd</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">num_labels</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">rd</span> <span class="o">&lt;=</span> <span class="n">config</span><span class="o">.</span><span class="n">rounds</span><span class="p">:</span>
+
+        <span class="n">active_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;active_round_</span><span class="si">{rd}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">active_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o777</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Active Round </span><span class="si">{rd}</span><span class="s1"> with {np.sum(idxs_lb).item()} labeled instances&#39;</span><span class="p">)</span>
+        <span class="n">strategy</span><span class="o">.</span><span class="n">active_round</span> <span class="o">=</span> <span class="n">rd</span>
+
+        <span class="c1"># query</span>
+        <span class="k">if</span> <span class="n">rd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">q_idxs</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">num_query</span><span class="p">)</span>
+            <span class="n">strategy</span><span class="o">.</span><span class="n">idxs_q</span> <span class="o">=</span> <span class="n">q_idxs</span>
+            <span class="n">idxs_lb</span><span class="p">[</span><span class="n">q_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># update</span>
+            <span class="n">strategy</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">idxs_lb</span><span class="p">)</span>
+            <span class="n">active_meta_log_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;active_meta&#39;</span><span class="p">,</span>
+                <span class="n">active_round</span><span class="o">=</span><span class="n">rd</span><span class="p">,</span>
+                <span class="n">labeled_num</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idxs_lb</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                <span class="n">idxs_queried</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">q_idxs</span><span class="p">),</span>
+                <span class="n">idxs_lb</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">idxs_lb</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">strategy</span><span class="o">.</span><span class="n">TextLogger</span><span class="o">.</span><span class="n">_dump_log</span><span class="p">(</span><span class="n">active_meta_log_dict</span><span class="p">)</span>
+
+        <span class="c1"># 查询完之后才可初始化</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">updating</span><span class="p">:</span>
+            <span class="n">strategy</span><span class="o">.</span><span class="n">init_clf</span><span class="p">()</span>
+
+        <span class="n">strategy</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">resumed</span><span class="o">=</span><span class="n">resumed</span><span class="p">)</span>
+        <span class="n">resumed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Val accuracy</span>
+        <span class="n">acc</span><span class="p">[</span><span class="n">rd</span><span class="p">]</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">predict_eval</span><span class="p">(</span><span class="n">X_eval</span><span class="p">,</span> <span class="n">Y_eval</span><span class="p">,</span> <span class="n">rd</span><span class="o">=</span><span class="n">rd</span><span class="p">)</span>
+        <span class="n">num_labels</span><span class="p">[</span><span class="n">rd</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">idxs_lb</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">plotter</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dconfig</span><span class="p">))</span>
+        <span class="n">P</span><span class="o">.</span><span class="n">visualization</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">check_inconsistency</span><span class="p">(</span><span class="n">plotter_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plotter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="n">rd</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Test accuracy</span>
+    <span class="n">strategy</span><span class="o">.</span><span class="n">predict_eval</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+
+    <span class="c1"># plot acc - label_num curve</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="s1">&#39;r-*&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="s1">&#39;acc_num_labels.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">Timer</span><span class="p">():</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">parse_commandline_args</span><span class="p">()</span>
+        <span class="n">run</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

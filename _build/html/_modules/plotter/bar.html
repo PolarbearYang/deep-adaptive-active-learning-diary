@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>plotter.bar &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>plotter.bar</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for plotter.bar</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bar_by_entropy&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;bar_by_rank_entropy&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;bar_incorrect_by_class&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;bar_queried_correct_incorrect_by_class&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;bar_queried_incorrect_by_class&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;bar_labeled_by_class&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;bar_queried_by_class&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;bar_correct_incorrect_by_class&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="bar_by_entropy"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_by_entropy">[docs]</a><span class="k">def</span> <span class="nf">bar_by_entropy</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">entropy_list_correct</span><span class="p">,</span> <span class="n">entropy_list_incorrect</span><span class="p">,</span> <span class="n">get_bins</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of samples corresponding to different entropy levels.</span>
+<span class="sd">       Maybe useful in the first few rounds, or facing hard datasets.</span>
+
+<span class="sd">       :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">       :param entropy_list_correct: (np.nadrray) The entropy of all correctly labeled samples.</span>
+<span class="sd">       :param entropy_list_incorrect: (np.nadrray) The entropy of all mislabeled samples.</span>
+<span class="sd">       :param get_bins: (func) A function dividing the current range (according the range of given arrays) into intervals.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;Entropy&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Entropy Value&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">([</span><span class="n">entropy_list_correct</span><span class="p">,</span> <span class="n">entropy_list_incorrect</span><span class="p">],</span>
+             <span class="n">bins</span><span class="o">=</span><span class="n">get_bins</span><span class="p">(</span><span class="n">entropy_list_correct</span><span class="p">,</span> <span class="n">entropy_list_incorrect</span><span class="p">),</span>
+             <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;correct&#39;</span><span class="p">,</span> <span class="s1">&#39;incorrect&#39;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;entropy_bar_in_range.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="bar_by_rank_entropy"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_by_rank_entropy">[docs]</a><span class="k">def</span> <span class="nf">bar_by_rank_entropy</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">entropy_rank_list_correct</span><span class="p">,</span> <span class="n">entropy_rank_list_incorrect</span><span class="p">,</span> <span class="n">get_bins</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of samples corresponding to different entropy levels(by rank).</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param entropy_rank_list_correct: (np.nadrray) The entropy(by rank) of all correctly labeled samples.</span>
+<span class="sd">        :param entropy_rank_list_incorrect: (np.nadrray) The entropy(by rank) of all mislabeled samples.</span>
+<span class="sd">        :param get_bins: (func) A function dividing the current range (according the range of given arrays) into intervals.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;ENTROPY_BY_RANK&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Entropy Rank&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">([</span><span class="n">entropy_rank_list_correct</span><span class="p">,</span> <span class="n">entropy_rank_list_incorrect</span><span class="p">],</span>
+             <span class="n">bins</span><span class="o">=</span><span class="n">get_bins</span><span class="p">(</span><span class="n">entropy_rank_list_correct</span><span class="p">,</span> <span class="n">entropy_rank_list_incorrect</span><span class="p">),</span>
+             <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;correct&#39;</span><span class="p">,</span> <span class="s1">&#39;incorrect&#39;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;entropy_bar_in_rank.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="bar_correct_incorrect_by_class"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_correct_incorrect_by_class">[docs]</a><span class="k">def</span> <span class="nf">bar_correct_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index_correct</span><span class="p">,</span> <span class="n">index_incorrect</span><span class="p">,</span>
+                                   <span class="n">correct_by_class</span><span class="p">,</span> <span class="n">incorrect_by_class</span><span class="p">,</span>
+                                   <span class="n">bar_width</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of correctly labeled samples and mislabeled samples by the model in each class.</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param index_correct: (np.ndarray[float]) The position of the bar of correct labeled samples on the x-axis in the figure (corresponding to each class).</span>
+<span class="sd">        :param index_incorrect: (np.nadrray[float]) The position of the bar of mislabeled samples on the x-axis in the figure (corresponding to each class).</span>
+<span class="sd">        :param correct_by_class: (np.ndarray[int]) The number of correct labeled samples in each class.</span>
+<span class="sd">        :param incorrect_by_class: (np.nadrray[int]) The number of mislabeled samples in each class.</span>
+<span class="sd">        :param bar_width: (float) The bar width of each bar in the figure.</span>
+<span class="sd">        :param text_by_class: (list[str]) The class name corresponding to each label.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;CORRECT_INCORRECT_NUM_BY_CLASS&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Category&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">index_correct</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">correct_by_class</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">bar_width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;correct&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">index_incorrect</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">incorrect_by_class</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">bar_width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;incorrect&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">index_correct</span> <span class="o">+</span> <span class="n">bar_width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;correct_incorrect_bar_by_class.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="bar_incorrect_by_class"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_incorrect_by_class">[docs]</a><span class="k">def</span> <span class="nf">bar_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">,</span> <span class="n">incorrect_by_class</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of mislabeled samples by the model in each class.</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param incorrect_by_class: (np.nadrray[int]) The number of mislabeled samples in each class.</span>
+<span class="sd">        :param text_by_class: (list[str]) The class name corresponding to each label.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;INCORRECT_NUM_BY_CLASS&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Category&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">text_by_class</span><span class="p">,</span> <span class="n">incorrect_by_class</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;incorrect_bar.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="bar_labeled_by_class"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_labeled_by_class">[docs]</a><span class="k">def</span> <span class="nf">bar_labeled_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">label2text</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">idxs_lb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of labeled samples in the current training pool in each class.</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param label2text: (dict[int, str]) A dict maps each label number to class name.</span>
+<span class="sd">        :param text_by_class: (list[str]) The class name corresponding to each label.</span>
+<span class="sd">        :param Y: (Any) The label list corresponding to each sample.</span>
+<span class="sd">        :param idxs_lb: (np.ndarray[bool]) A boolean array indicating whether the sample is labeled.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">labeled_by_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label2text</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="c1"># 查看错误样本/正确样本的标注</span>
+    <span class="n">Y_labeled_temp</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">idxs_lb</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label2text</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">labeled_by_class</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Y_labeled_temp</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;LABELED_NUM_BY_CLASS&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Category&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">text_by_class</span><span class="p">,</span> <span class="n">labeled_by_class</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;labeled_bar.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="bar_queried_by_class"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_queried_by_class">[docs]</a><span class="k">def</span> <span class="nf">bar_queried_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">queried_by_class</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of mislabeled samples by the model in each class.</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param queried_by_class: (np.nadrray[int]) The number of queried samples in each class.</span>
+<span class="sd">        :param text_by_class: (list[str]) The class name corresponding to each label.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;QUERIED_NUM_BY_CLASS&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Category&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">text_by_class</span><span class="p">,</span> <span class="n">queried_by_class</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;queried_bar_by_class.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="bar_queried_correct_incorrect_by_class"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_queried_correct_incorrect_by_class">[docs]</a><span class="k">def</span> <span class="nf">bar_queried_correct_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index_correct</span><span class="p">,</span> <span class="n">index_incorrect</span><span class="p">,</span>
+                                           <span class="n">queried_correct_by_class</span><span class="p">,</span> <span class="n">queried_incorrect_by_class</span><span class="p">,</span>
+                                           <span class="n">text_by_class</span><span class="p">,</span> <span class="n">bar_width</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of correctly labeled samples and mislabeled samples by the model of the query batch</span>
+<span class="sd">    in each class.</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure</span>
+<span class="sd">        :param index_correct: (np.ndarray[float]) The position of the bar of correct labeled samples on the x-axis in the figure (corresponding to each class).</span>
+<span class="sd">        :param index_incorrect: (np.nadrray[float]) The position of the bar of mislabeled samples on the x-axis in the figure (corresponding to each class).</span>
+<span class="sd">        :param queried_correct_by_class: (np.ndarray[int]) The number of correct labeled samples in the query batch in each class.</span>
+<span class="sd">        :param queried_incorrect_by_class: (np.nadrray[int]) The number of mislabeled samples in the query batch in each class</span>
+<span class="sd">        :param text_by_class: (list[str]) The class name corresponding to each label.</span>
+<span class="sd">        :param bar_width: (float) The bar width of each bar in the figure.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;CORRECT_INCORRECT_NUM_QUERY_BY_CLASS&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Category&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">index_correct</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">queried_correct_by_class</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">bar_width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;correct&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">index_incorrect</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">queried_incorrect_by_class</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">bar_width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;incorrect&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">index_correct</span> <span class="o">+</span> <span class="n">bar_width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;correct_incorrect_queried_bar_by_class.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="bar_queried_incorrect_by_class"><a class="viewcode-back" href="../../source/plotter.html#plotter.bar.bar_queried_incorrect_by_class">[docs]</a><span class="k">def</span> <span class="nf">bar_queried_incorrect_by_class</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">queried_incorrect_by_class</span><span class="p">,</span> <span class="n">text_by_class</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the number of mislabeled samples by the model of the query batch in each class.</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param queried_incorrect_by_class: (np.nadrray[int]) The number of mislabeled samples in the query batch in each class.</span>
+<span class="sd">        :param text_by_class: (list[str]) The class name corresponding to each label.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="s1">&#39;INCORRECT_QUERIED_NUM_BY_CLASS&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Category&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Examples&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">text_by_class</span><span class="p">,</span> <span class="n">queried_incorrect_by_class</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;incorrect_queried_bar_by_class.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

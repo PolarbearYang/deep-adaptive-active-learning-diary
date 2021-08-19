@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>utils.in_out &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>utils.in_out</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for utils.in_out</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">.misc</span> <span class="k">import</span> <span class="n">is_list_of</span><span class="p">,</span> <span class="n">is_str</span>
+<span class="kn">from</span> <span class="nn">.handlers</span> <span class="k">import</span> <span class="n">BaseFileHandler</span><span class="p">,</span> <span class="n">JsonHandler</span><span class="p">,</span> <span class="n">PickleHandler</span><span class="p">,</span> <span class="n">YamlHandler</span>
+
+<span class="n">file_handlers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;json&#39;</span><span class="p">:</span> <span class="n">JsonHandler</span><span class="p">(),</span>
+    <span class="s1">&#39;yaml&#39;</span><span class="p">:</span> <span class="n">YamlHandler</span><span class="p">(),</span>
+    <span class="s1">&#39;yml&#39;</span><span class="p">:</span> <span class="n">YamlHandler</span><span class="p">(),</span>
+    <span class="s1">&#39;pickle&#39;</span><span class="p">:</span> <span class="n">PickleHandler</span><span class="p">(),</span>
+    <span class="s1">&#39;pkl&#39;</span><span class="p">:</span> <span class="n">PickleHandler</span><span class="p">()</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../source/utils.html#utils.in_out.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load data from json/yaml/pickle files.</span>
+
+<span class="sd">    This method provides a unified api for loading data from serialized files.</span>
+
+<span class="sd">    :param file: Filename or a file-like</span>
+<span class="sd">           object.</span>
+<span class="sd">    :param file_format: If not specified, the file format will be</span>
+<span class="sd">           inferred from the file extension, otherwise use the specified one.</span>
+<span class="sd">           Currently supported formats include &quot;json&quot;, &quot;yaml/yml&quot; and</span>
+<span class="sd">           &quot;pickle/pkl&quot;.</span>
+
+<span class="sd">    :return The content from the file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_format</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">is_str</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="n">file_format</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">file_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_handlers</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unsupported format: </span><span class="si">{file_format}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">file_handlers</span><span class="p">[</span><span class="n">file_format</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">is_str</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">load_from_path</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">load_from_fileobj</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;file&quot; must be a filepath str or a file-object&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span></div>
+
+
+<div class="viewcode-block" id="dump"><a class="viewcode-back" href="../../source/utils.html#utils.in_out.dump">[docs]</a><span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dump data to json/yaml/pickle strings or files.</span>
+<span class="sd">    This method provides a unified api for dumping data as strings or to files,</span>
+<span class="sd">    and also supports custom arguments for each file format.</span>
+
+<span class="sd">    :param obj: The python object to be dumped.</span>
+<span class="sd">    :param file: If not specified, then the object is dump to a str, otherwise to a file</span>
+<span class="sd">           specified by the filename or file-like object.</span>
+<span class="sd">    :param file_format: Same as :func:`load`.</span>
+
+<span class="sd">    :return: True for success, False otherwise.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_str</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+            <span class="n">file_format</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;file_format must be specified since file is None&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_handlers</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Unsupported format: </span><span class="si">{file_format}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">file_handlers</span><span class="p">[</span><span class="n">file_format</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="n">dump_to_str</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">is_str</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">dump_to_path</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;write&#39;</span><span class="p">):</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">dump_to_fileobj</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;file&quot; must be a filename str or a file-object&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_register_handler</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">file_formats</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Register a handler for some file extensions.</span>
+
+<span class="sd">    :param handler: (:obj:`BaseFileHandler`) Handler to be registered.</span>
+<span class="sd">    :param file_formats : (str or list[str])File formats to be handled by this</span>
+<span class="sd">           handler.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">BaseFileHandler</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s1">&#39;handler must be a child of BaseFileHandler, not {type(handler)}&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_formats</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">file_formats</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_formats</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_list_of</span><span class="p">(</span><span class="n">file_formats</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;file_formats must be a str or a list of str&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">file_formats</span><span class="p">:</span>
+        <span class="n">file_handlers</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span>
+
+
+<div class="viewcode-block" id="register_handler"><a class="viewcode-back" href="../../source/utils.html#utils.in_out.register_handler">[docs]</a><span class="k">def</span> <span class="nf">register_handler</span><span class="p">(</span><span class="n">file_formats</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">_register_handler</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">file_formats</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span>
+
+    <span class="k">return</span> <span class="n">wrap</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

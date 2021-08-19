@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>utils.misc &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>utils.misc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for utils.misc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections.abc</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">abc</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="k">import</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">getfullargspec</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">repeat</span>
+
+
+<span class="c1"># From PyTorch internals</span>
+<span class="k">def</span> <span class="nf">_ntuple</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">repeat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">parse</span>
+
+
+<span class="n">to_1tuple</span> <span class="o">=</span> <span class="n">_ntuple</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">to_2tuple</span> <span class="o">=</span> <span class="n">_ntuple</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">to_3tuple</span> <span class="o">=</span> <span class="n">_ntuple</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">to_4tuple</span> <span class="o">=</span> <span class="n">_ntuple</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">to_ntuple</span> <span class="o">=</span> <span class="n">_ntuple</span>
+
+
+<div class="viewcode-block" id="is_str"><a class="viewcode-back" href="../../source/utils.html#utils.misc.is_str">[docs]</a><span class="k">def</span> <span class="nf">is_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Whether the input is an string instance.</span>
+
+<span class="sd">    Note: This method is deprecated since python 2 is no longer supported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="import_modules_from_strings"><a class="viewcode-back" href="../../source/utils.html#utils.misc.import_modules_from_strings">[docs]</a><span class="k">def</span> <span class="nf">import_modules_from_strings</span><span class="p">(</span><span class="n">imports</span><span class="p">,</span> <span class="n">allow_failed_imports</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Import modules from the given list of strings.</span>
+
+<span class="sd">    :param: imports: The given module names to be imported.</span>
+<span class="sd">    :param: allow_failed_imports: If True, the failed imports will return</span>
+<span class="sd">            None. Otherwise, an ImportError is raise. Default: False.</span>
+
+<span class="sd">    :return: The imported modules.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; osp, sys = import_modules_from_strings(</span>
+<span class="sd">        ...     [&#39;os.path&#39;, &#39;sys&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; import os.path as osp_</span>
+<span class="sd">        &gt;&gt;&gt; import sys as sys_</span>
+<span class="sd">        &gt;&gt;&gt; assert osp == osp_</span>
+<span class="sd">        &gt;&gt;&gt; assert sys == sys_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">imports</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">single_import</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">imports</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">single_import</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">imports</span> <span class="o">=</span> <span class="p">[</span><span class="n">imports</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">imports</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s1">&#39;custom_imports must be a list but got type {type(imports)}&#39;</span><span class="p">)</span>
+    <span class="n">imported</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="n">imports</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">imp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s1">&#39;</span><span class="si">{imp}</span><span class="s1"> is of type {type(imp)} and cannot be imported.&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">imported_tmp</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">imp</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allow_failed_imports</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{imp}</span><span class="s1"> failed to import and is ignored.&#39;</span><span class="p">,</span>
+                              <span class="ne">UserWarning</span><span class="p">)</span>
+                <span class="n">imported_tmp</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ImportError</span>
+        <span class="n">imported</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imported_tmp</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">single_import</span><span class="p">:</span>
+        <span class="n">imported</span> <span class="o">=</span> <span class="n">imported</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">imported</span></div>
+
+
+<div class="viewcode-block" id="iter_cast"><a class="viewcode-back" href="../../source/utils.html#utils.misc.iter_cast">[docs]</a><span class="k">def</span> <span class="nf">iter_cast</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dst_type</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cast elements of an iterable object into some type.</span>
+
+<span class="sd">    :param inputs: (Iterable) The input object.</span>
+<span class="sd">    :param dst_type: (type) Destination type.</span>
+<span class="sd">    :param return_type: (type, optional) If specified, the output object will be</span>
+<span class="sd">           converted to this type, otherwise an iterator.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        iterator or specified type: The converted object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;inputs must be an iterable object&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;dst_type&quot; must be a valid type&#39;</span><span class="p">)</span>
+
+    <span class="n">out_iterable</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">dst_type</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">out_iterable</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">return_type</span><span class="p">(</span><span class="n">out_iterable</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="list_cast"><a class="viewcode-back" href="../../source/utils.html#utils.misc.list_cast">[docs]</a><span class="k">def</span> <span class="nf">list_cast</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dst_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cast elements of an iterable object into a list of some type.</span>
+
+<span class="sd">    A partial method of :func:`iter_cast`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">iter_cast</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dst_type</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="tuple_cast"><a class="viewcode-back" href="../../source/utils.html#utils.misc.tuple_cast">[docs]</a><span class="k">def</span> <span class="nf">tuple_cast</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dst_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cast elements of an iterable object into a tuple of some type.</span>
+
+<span class="sd">    A partial method of :func:`iter_cast`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">iter_cast</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dst_type</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="nb">tuple</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_seq_of"><a class="viewcode-back" href="../../source/utils.html#utils.misc.is_seq_of">[docs]</a><span class="k">def</span> <span class="nf">is_seq_of</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">,</span> <span class="n">seq_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check whether it is a sequence of some type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seq (Sequence): The sequence to be checked.</span>
+<span class="sd">        expected_type (type): Expected type of sequence items.</span>
+<span class="sd">        seq_type (type, optional): Expected sequence type.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: Whether the sequence is valid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">seq_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exp_seq_type</span> <span class="o">=</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+        <span class="n">exp_seq_type</span> <span class="o">=</span> <span class="n">seq_type</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">exp_seq_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="is_list_of"><a class="viewcode-back" href="../../source/utils.html#utils.misc.is_list_of">[docs]</a><span class="k">def</span> <span class="nf">is_list_of</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check whether it is a list of some type.</span>
+
+<span class="sd">    A partial method of :func:`is_seq_of`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">is_seq_of</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">,</span> <span class="n">seq_type</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_tuple_of"><a class="viewcode-back" href="../../source/utils.html#utils.misc.is_tuple_of">[docs]</a><span class="k">def</span> <span class="nf">is_tuple_of</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check whether it is a tuple of some type.</span>
+
+<span class="sd">    A partial method of :func:`is_seq_of`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">is_seq_of</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">,</span> <span class="n">seq_type</span><span class="o">=</span><span class="nb">tuple</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="slice_list"><a class="viewcode-back" href="../../source/utils.html#utils.misc.slice_list">[docs]</a><span class="k">def</span> <span class="nf">slice_list</span><span class="p">(</span><span class="n">in_list</span><span class="p">,</span> <span class="n">lens</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Slice a list into several sub lists by a list of given length.</span>
+
+<span class="sd">    :param in_list: (list) The list to be sliced.</span>
+<span class="sd">    :param lens: (int or list) The expected length of each out list.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        list: A list of sliced list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lens</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_list</span><span class="p">)</span> <span class="o">%</span> <span class="n">lens</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">lens</span> <span class="o">=</span> <span class="p">[</span><span class="n">lens</span><span class="p">]</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">in_list</span><span class="p">)</span> <span class="o">/</span> <span class="n">lens</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lens</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;indices&quot; must be an integer or a list of integers&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lens</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;sum of lens and list length does not &#39;</span>
+                         <span class="n">f</span><span class="s1">&#39;match: {sum(lens)} != {len(in_list)}&#39;</span><span class="p">)</span>
+    <span class="n">out_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lens</span><span class="p">)):</span>
+        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">in_list</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">lens</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="n">lens</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">out_list</span></div>
+
+
+<div class="viewcode-block" id="concat_list"><a class="viewcode-back" href="../../source/utils.html#utils.misc.concat_list">[docs]</a><span class="k">def</span> <span class="nf">concat_list</span><span class="p">(</span><span class="n">in_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concatenate a list of list into a single list.</span>
+
+<span class="sd">    :param in_list: (list) The list of list to be merged.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        list: The concatenated flat list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">in_list</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="deprecated_api_warning"><a class="viewcode-back" href="../../source/utils.html#utils.misc.deprecated_api_warning">[docs]</a><span class="k">def</span> <span class="nf">deprecated_api_warning</span><span class="p">(</span><span class="n">name_dict</span><span class="p">,</span> <span class="n">cls_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A decorator to check if some arguments are deprecate and try to replace</span>
+<span class="sd">    deprecate src_arg_name to dst_arg_name.</span>
+
+<span class="sd">    :param name_dict: (dict)</span>
+<span class="sd">           - key (str): Deprecate argument names.</span>
+<span class="sd">           - val (str): Expected argument names.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        func: New function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">api_warning_wrapper</span><span class="p">(</span><span class="n">old_func</span><span class="p">):</span>
+
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">old_func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">new_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># get the arg spec of the decorated method</span>
+            <span class="n">args_info</span> <span class="o">=</span> <span class="n">getfullargspec</span><span class="p">(</span><span class="n">old_func</span><span class="p">)</span>
+            <span class="c1"># get name of the function</span>
+            <span class="n">func_name</span> <span class="o">=</span> <span class="n">old_func</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">if</span> <span class="n">cls_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">func_name</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{cls_name}</span><span class="s1">.</span><span class="si">{func_name}</span><span class="s1">&#39;</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">arg_names</span> <span class="o">=</span> <span class="n">args_info</span><span class="o">.</span><span class="n">args</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)]</span>
+                <span class="k">for</span> <span class="n">src_arg_name</span><span class="p">,</span> <span class="n">dst_arg_name</span> <span class="ow">in</span> <span class="n">name_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">src_arg_name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                            <span class="n">f</span><span class="s1">&#39;&quot;</span><span class="si">{src_arg_name}</span><span class="s1">&quot; is deprecated in &#39;</span>
+                            <span class="n">f</span><span class="s1">&#39;`</span><span class="si">{func_name}</span><span class="s1">`, please use &quot;</span><span class="si">{dst_arg_name}</span><span class="s1">&quot; &#39;</span>
+                            <span class="s1">&#39;instead&#39;</span><span class="p">)</span>
+                        <span class="n">arg_names</span><span class="p">[</span><span class="n">arg_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">src_arg_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dst_arg_name</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">src_arg_name</span><span class="p">,</span> <span class="n">dst_arg_name</span> <span class="ow">in</span> <span class="n">name_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">src_arg_name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                            <span class="n">f</span><span class="s1">&#39;&quot;</span><span class="si">{src_arg_name}</span><span class="s1">&quot; is deprecated in &#39;</span>
+                            <span class="n">f</span><span class="s1">&#39;`</span><span class="si">{func_name}</span><span class="s1">`, please use &quot;</span><span class="si">{dst_arg_name}</span><span class="s1">&quot; &#39;</span>
+                            <span class="s1">&#39;instead&#39;</span><span class="p">)</span>
+                        <span class="n">kwargs</span><span class="p">[</span><span class="n">dst_arg_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">src_arg_name</span><span class="p">)</span>
+
+            <span class="c1"># apply converted arguments to the decorated method</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">old_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">return</span> <span class="n">new_func</span>
+
+    <span class="k">return</span> <span class="n">api_warning_wrapper</span></div>
+
+
+<div class="viewcode-block" id="is_method_overridden"><a class="viewcode-back" href="../../source/utils.html#utils.misc.is_method_overridden">[docs]</a><span class="k">def</span> <span class="nf">is_method_overridden</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">base_class</span><span class="p">,</span> <span class="n">derived_class</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if a method of base class is overridden in derived class.</span>
+
+<span class="sd">    :param method: (str) the method name to check.</span>
+<span class="sd">    :param base_class: (type) the class of the base class.</span>
+<span class="sd">    :param derived_class: (type | Any) the class or instance of the derived class.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_class</span><span class="p">,</span> <span class="nb">type</span><span class="p">),</span> \
+        <span class="s2">&quot;base_class doesn&#39;t accept instance, Please pass class instead.&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">derived_class</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="n">derived_class</span> <span class="o">=</span> <span class="n">derived_class</span><span class="o">.</span><span class="vm">__class__</span>
+
+    <span class="n">base_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base_class</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+    <span class="n">derived_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">derived_class</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">derived_method</span> <span class="o">!=</span> <span class="n">base_method</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

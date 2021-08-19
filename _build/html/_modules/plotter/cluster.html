@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>plotter.cluster &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>plotter.cluster</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for plotter.cluster</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cluster_with_query&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;cluster_with_value&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;cluster_with_correct_or_not&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;cluster_with_embedding&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;cluster_with_lab_unlab&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="cluster_with_correct_or_not"><a class="viewcode-back" href="../../source/plotter.html#plotter.cluster.cluster_with_correct_or_not">[docs]</a><span class="k">def</span> <span class="nf">cluster_with_correct_or_not</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="n">Y_embedded</span><span class="p">,</span> <span class="n">idx_list_correct</span><span class="p">,</span>
+                                <span class="n">indices</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the current distribution of correctly classified and misclassified samples in 2D space</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param X_embedded: (np.nadrray[float]) An n x 2 array indicates the embedding of the feature of all samples.</span>
+<span class="sd">        :param Y_embedded: (np.nadrray[int]) The labels corresponding to samples in X_embedded.</span>
+<span class="sd">        :param idx_list_correct: (list[int]) The indices of all correctly labeled samples.</span>
+<span class="sd">        :param indices: (np.ndarray[int]) The plotting order of all instances.</span>
+<span class="sd">        :param method: (str) The dimension reduction method we use.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">correct_or_not</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Y_embedded</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idx_list_correct</span><span class="p">:</span>
+        <span class="n">correct_or_not</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">temp_dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;correct&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;incorrect&#39;</span><span class="p">}</span>
+    <span class="n">correct_or_not</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">temp_dict</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">correct_or_not</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{method.upper()}_BY_CORRECT_OR_NOT&#39;</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span>
+                    <span class="n">hue</span><span class="o">=</span><span class="n">correct_or_not</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="s1">&#39;brief&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{method}</span><span class="s1">_by_correct_or_not.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="cluster_with_value"><a class="viewcode-back" href="../../source/plotter.html#plotter.cluster.cluster_with_value">[docs]</a><span class="k">def</span> <span class="nf">cluster_with_value</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the current distribution of samples</span>
+<span class="sd">    with values specified by entropy, soft weight, acquisition score, etc.</span>
+<span class="sd">    This function is really slow, you may consider optimize the following two &quot;for&quot; loops.</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param name: (str) The name of the `value` we use.</span>
+<span class="sd">        :param value: (np.nadrray[float]) Some acquisition value corresponding to samples in X_embedded.</span>
+<span class="sd">        :param X_embedded: (np.nadrray[float]) An n x 2 array indicates the embedding of the feature of all samples.</span>
+<span class="sd">        :param indices: (np.ndarray[int]) The plotting order of all instances.</span>
+<span class="sd">        :param method: (str) The dimension reduction method we use.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{method.upper()}_BY_{name.upper()}&#39;</span><span class="p">)</span>
+    <span class="n">palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;flare&quot;</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alpha</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span><span class="p">):</span>
+                <span class="n">beta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+                <span class="k">break</span>
+
+    <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span>
+                    <span class="n">hue</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{method}</span><span class="s1">_by_</span><span class="si">{name}</span><span class="s1">.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="cluster_with_lab_unlab"><a class="viewcode-back" href="../../source/plotter.html#plotter.cluster.cluster_with_lab_unlab">[docs]</a><span class="k">def</span> <span class="nf">cluster_with_lab_unlab</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="n">idxs_lb</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the current labeled and unlabeled samples in 2D space</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param X_embedded: (np.nadrray[float]) An n x 2 array indicates the embedding of the feature of all samples.</span>
+<span class="sd">        :param idxs_lb: (np.ndarray[bool]) A boolean array indicating whether the sample is labeled.</span>
+<span class="sd">        :param method: (str) The dimension reduction method we use.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">label_or_not</span> <span class="o">=</span> <span class="n">idxs_lb</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">idxs_lb</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">idxs_lb</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">])</span>
+    <span class="n">temp_dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;labeled&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;unlabeled&#39;</span><span class="p">}</span>
+    <span class="n">label_or_not</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">temp_dict</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">label_or_not</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{method.upper()}_BY_LABELED_OR_UNLABELED&#39;</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span>
+                    <span class="n">hue</span><span class="o">=</span><span class="n">label_or_not</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="s1">&#39;brief&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{method}</span><span class="s1">_by_labeled_or_not.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="cluster_with_query"><a class="viewcode-back" href="../../source/plotter.html#plotter.cluster.cluster_with_query">[docs]</a><span class="k">def</span> <span class="nf">cluster_with_query</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="n">idxs_q</span><span class="p">,</span> <span class="n">text_gt_labels</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the current distribution of queried samples in 2D space</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param num_classes: (int) The number of classes of the dataset.</span>
+<span class="sd">        :param X_embedded: (np.nadrray[float]) An n x 2 array indicates the embedding of the feature of all samples.</span>
+<span class="sd">        :param idxs_q: (list[int]) The indices of sample in the query batch.</span>
+<span class="sd">        :param method: (str) The dimension reduction method we use.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{method.upper()}_BY_QUERY&#39;</span><span class="p">)</span>
+    <span class="n">palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;bright&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+
+    <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span>
+                    <span class="n">hue</span><span class="o">=</span><span class="n">text_gt_labels</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="s1">&#39;brief&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">idxs_q</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">idxs_q</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{method}</span><span class="s1">_by_query.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="cluster_with_embedding"><a class="viewcode-back" href="../../source/plotter.html#plotter.cluster.cluster_with_embedding">[docs]</a><span class="k">def</span> <span class="nf">cluster_with_embedding</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">X_embedded</span><span class="p">,</span> <span class="n">text_gt_labels</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;tsne&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the current distribution embedding in 2D space</span>
+
+<span class="sd">        :param save_path: (str) The saving folder of the current figure.</span>
+<span class="sd">        :param num_classes: (int) The number of classes of the dataset.</span>
+<span class="sd">        :param X_embedded: (np.nadrray[float]) An n x 2 array indicates the embedding of the feature of all samples.</span>
+<span class="sd">        :param text_gt_labels: (np.ndarray[str]) The class name of each sample.</span>
+<span class="sd">        :param indices: (np.ndarray[int]) The plotting order of all instances.</span>
+<span class="sd">        :param style: (np.ndrray[str]) The plot shape of each sample.</span>
+<span class="sd">        :param method: (str) The dimension reduction method we use.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{method.upper()}_BY_CLASS&#39;</span><span class="p">)</span>
+
+    <span class="n">palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;bright&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+
+    <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span> <span class="n">X_embedded</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span>
+                    <span class="n">hue</span><span class="o">=</span><span class="n">text_gt_labels</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span>
+                    <span class="n">legend</span><span class="o">=</span><span class="s1">&#39;brief&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{method}</span><span class="s1">_by_class.png&#39;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

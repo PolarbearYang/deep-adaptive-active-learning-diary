@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>utils.registry &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>utils.registry</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for utils.registry</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span> <span class="nn">.misc</span> <span class="k">import</span> <span class="n">is_seq_of</span>
+
+
+<div class="viewcode-block" id="build_from_cfg"><a class="viewcode-back" href="../../source/utils.html#utils.registry.build_from_cfg">[docs]</a><span class="k">def</span> <span class="nf">build_from_cfg</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">registry</span><span class="p">,</span> <span class="n">default_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build a module from config dict.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfg (dict):</span>
+<span class="sd">            Config dict. It should at least contain the key &quot;type&quot;.</span>
+<span class="sd">        registry (:obj:`Registry`):</span>
+<span class="sd">            The registry to search the type from.</span>
+<span class="sd">        default_args (dict, optional):</span>
+<span class="sd">            Default initialization arguments.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        object: The constructed object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;cfg must be a dict, but got {type(cfg)}&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">default_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s1">&#39;type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_args</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="s1">&#39;`cfg` or `default_args` must contain the key &quot;type&quot;, &#39;</span>
+                <span class="n">f</span><span class="s1">&#39;but got </span><span class="si">{cfg}</span><span class="se">\n</span><span class="si">{default_args}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span> <span class="n">Registry</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;registry must be an Registry object, &#39;</span>
+                        <span class="n">f</span><span class="s1">&#39;but got {type(registry)}&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">default_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="n">default_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;default_args must be a dict or None, &#39;</span>
+                        <span class="n">f</span><span class="s1">&#39;but got {type(default_args)}&#39;</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">default_args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">default_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="n">obj_type</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">obj_cls</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obj_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s1">&#39;</span><span class="si">{obj_type}</span><span class="s1"> is not in the </span><span class="si">{registry.name}</span><span class="s1"> registry&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj_type</span><span class="p">):</span>
+        <span class="n">obj_cls</span> <span class="o">=</span> <span class="n">obj_type</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="n">f</span><span class="s1">&#39;type must be a str or valid type, but got {type(obj_type)}&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj_cls</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Normal TypeError does not print class name.</span>
+        <span class="k">raise</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{obj_cls.__name__}</span><span class="s1">: </span><span class="si">{e}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Registry"><a class="viewcode-back" href="../../source/utils.html#utils.registry.Registry">[docs]</a><span class="k">class</span> <span class="nc">Registry</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A registry to map strings to classes.</span>
+
+<span class="sd">    Registered object could be built from registry.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str):</span>
+<span class="sd">            Registry name.</span>
+
+<span class="sd">        build_func(func, optional):</span>
+<span class="sd">            Build function to construct instance from</span>
+<span class="sd">            Registry, func:`build_from_cfg` is used if neither ``parent`` or</span>
+<span class="sd">            ``build_func`` is specified. If ``parent`` is specified and</span>
+<span class="sd">            ``build_func`` is not given,  ``build_func`` will be inherited</span>
+<span class="sd">            from ``parent``. Default: None.</span>
+
+<span class="sd">        parent (Registry, optional):</span>
+<span class="sd">            Parent registry. The class registered in</span>
+<span class="sd">            children registry could be built from parent. Default: None.</span>
+
+<span class="sd">        scope (str, optional):</span>
+<span class="sd">            The scope of registry. It is the key to search</span>
+<span class="sd">            for children registry. If not specified, scope will be the name of</span>
+<span class="sd">            the package where class is defined.</span>
+<span class="sd">            Default: None.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; MODELS = Registry(&#39;models&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; @MODELS.register_module()</span>
+<span class="sd">        &gt;&gt;&gt; class ResNet:</span>
+<span class="sd">        &gt;&gt;&gt;     pass</span>
+<span class="sd">        &gt;&gt;&gt; resnet = MODELS.build(dict(type=&#39;ResNet&#39;))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">build_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infer_scope</span><span class="p">()</span> <span class="k">if</span> <span class="n">scope</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scope</span>
+
+        <span class="c1"># self.build_func will be set with the following priority:</span>
+        <span class="c1"># 1. build_func</span>
+        <span class="c1"># 2. parent.build_func</span>
+        <span class="c1"># 3. build_from_cfg</span>
+        <span class="k">if</span> <span class="n">build_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">build_func</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">build_func</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">build_func</span> <span class="o">=</span> <span class="n">build_from_cfg</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_func</span> <span class="o">=</span> <span class="n">build_func</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">Registry</span><span class="p">)</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">_add_children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">format_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> \
+                     <span class="n">f</span><span class="s1">&#39;(name=</span><span class="si">{self._name}</span><span class="s1">, &#39;</span> \
+                     <span class="n">f</span><span class="s1">&#39;items=</span><span class="si">{self._module_dict}</span><span class="s1">)&#39;</span>
+        <span class="k">return</span> <span class="n">format_str</span>
+
+<div class="viewcode-block" id="Registry.infer_scope"><a class="viewcode-back" href="../../source/utils.html#utils.registry.Registry.infer_scope">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">infer_scope</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;Infer the scope of registry.</span>
+
+<span class="sd">        The name of the package where registry is defined will be returned.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            # in architectures/resnet.py</span>
+<span class="sd">            &gt;&gt;&gt; MODELS = Registry(&#39;models&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; @MODELS.register_module()</span>
+<span class="sd">            &gt;&gt;&gt; class ResNet:</span>
+<span class="sd">            &gt;&gt;&gt;     pass</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            scope (str): The inferred scope name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># inspect.stack() trace where this function is called, the index-2</span>
+        <span class="c1"># indicates the frame where `infer_scope()` is called</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">split_filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">split_filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Registry.split_scope_key"><a class="viewcode-back" href="../../source/utils.html#utils.registry.Registry.split_scope_key">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">split_scope_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Split scope and key.</span>
+
+<span class="sd">        The first scope will be split from key.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; Registry.split_scope_key(&#39;ResNet&#39;)</span>
+<span class="sd">            None, &#39;ResNet&#39;</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            scope (str, None): The first scope.</span>
+<span class="sd">            key (str): The remaining key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">split_index</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">split_index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">key</span><span class="p">[:</span><span class="n">split_index</span><span class="p">],</span> <span class="n">key</span><span class="p">[</span><span class="n">split_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">module_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span>
+
+<div class="viewcode-block" id="Registry.get"><a class="viewcode-back" href="../../source/utils.html#utils.registry.Registry.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the registry record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str): The class name in string format.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            class: The corresponding class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scope</span><span class="p">,</span> <span class="n">real_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_scope_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scope</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scope</span><span class="p">:</span>
+            <span class="c1"># get from self</span>
+            <span class="k">if</span> <span class="n">real_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="p">[</span><span class="n">real_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># get from self._children</span>
+            <span class="k">if</span> <span class="n">scope</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">[</span><span class="n">scope</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">real_key</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># goto root</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+                <span class="k">while</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+                <span class="k">return</span> <span class="n">parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Registry.build"><a class="viewcode-back" href="../../source/utils.html#utils.registry.Registry.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">registry</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_add_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">registry</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add children for a registry.</span>
+
+<span class="sd">        The ``registry`` will be added as children based on its scope.</span>
+<span class="sd">        The parent registry could build objects from children registry.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; models = Registry(&#39;models&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; child_models = Registry(&#39;models&#39;, parent=models)</span>
+<span class="sd">            &gt;&gt;&gt; @child_models.register_module()</span>
+<span class="sd">            &gt;&gt;&gt; class ResNet:</span>
+<span class="sd">            &gt;&gt;&gt;     pass</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span> <span class="n">Registry</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">registry</span><span class="o">.</span><span class="n">scope</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">registry</span><span class="o">.</span><span class="n">scope</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> \
+            <span class="n">f</span><span class="s1">&#39;scope </span><span class="si">{registry.scope}</span><span class="s1"> exists in </span><span class="si">{self.name}</span><span class="s1"> registry&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">registry</span><span class="o">.</span><span class="n">scope</span><span class="p">]</span> <span class="o">=</span> <span class="n">registry</span>
+
+    <span class="k">def</span> <span class="nf">_register_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_class</span><span class="p">,</span> <span class="n">module_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">module_class</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;module must be a class, &#39;</span>
+                            <span class="n">f</span><span class="s1">&#39;but got {type(module_class)}&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">module_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_class</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">module_name</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">force</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{name}</span><span class="s1"> is already registered &#39;</span>
+                               <span class="n">f</span><span class="s1">&#39;in </span><span class="si">{self.name}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_module_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_class</span>
+
+<div class="viewcode-block" id="Registry.deprecated_register_module"><a class="viewcode-back" href="../../source/utils.html#utils.registry.Registry.deprecated_register_module">[docs]</a>    <span class="k">def</span> <span class="nf">deprecated_register_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s1">&#39;The old API of register_module(module, force=False) &#39;</span>
+            <span class="s1">&#39;is deprecated and will be removed, please use the new API &#39;</span>
+            <span class="s1">&#39;register_module(name=None, force=False, module=None) instead.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deprecated_register_module</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span></div>
+
+<div class="viewcode-block" id="Registry.register_module"><a class="viewcode-back" href="../../source/utils.html#utils.registry.Registry.register_module">[docs]</a>    <span class="k">def</span> <span class="nf">register_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register a module.</span>
+
+<span class="sd">        A record will be added to `self._module_dict`, whose key is the class</span>
+<span class="sd">        name or the specified name, and value is the class itself.</span>
+<span class="sd">        It can be used as a decorator or a normal function.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; backbones = Registry(&#39;backbone&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; @backbones.register_module()</span>
+<span class="sd">            &gt;&gt;&gt; class ResNet:</span>
+<span class="sd">            &gt;&gt;&gt;     pass</span>
+
+<span class="sd">            &gt;&gt;&gt; backbones = Registry(&#39;backbone&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; @backbones.register_module(name=&#39;mnet&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; class MobileNet:</span>
+<span class="sd">            &gt;&gt;&gt;     pass</span>
+
+<span class="sd">            &gt;&gt;&gt; backbones = Registry(&#39;backbone&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; class ResNet:</span>
+<span class="sd">            &gt;&gt;&gt;     pass</span>
+<span class="sd">            &gt;&gt;&gt; backbones.register_module(ResNet)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str | None):</span>
+<span class="sd">                The module name to be registered. If not specified, the class name will be used.</span>
+<span class="sd">            force (bool, optional):</span>
+<span class="sd">                Whether to override an existing class with the same name. Default: False.</span>
+<span class="sd">            module (type)</span>
+<span class="sd">                Module class to be registered.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">force</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;force must be a boolean, but got {type(force)}&#39;</span><span class="p">)</span>
+        <span class="c1"># NOTE: This is a walkaround to be compatible with the old api,</span>
+        <span class="c1"># while it may introduce unexpected bugs.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">deprecated_register_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+
+        <span class="c1"># raise the error ahead of time</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_seq_of</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;name must be either of None, an instance of str or a sequence&#39;</span>
+                <span class="n">f</span><span class="s1">&#39;  of str, but got {type(name)}&#39;</span><span class="p">)</span>
+
+        <span class="c1"># use it as a normal method: x.register_module(module=SomeClass)</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_module</span><span class="p">(</span>
+                <span class="n">module_class</span><span class="o">=</span><span class="n">module</span><span class="p">,</span> <span class="n">module_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">module</span>
+
+        <span class="c1"># use it as a decorator: @x.register_module()</span>
+        <span class="k">def</span> <span class="nf">_register</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_module</span><span class="p">(</span>
+                <span class="n">module_class</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span> <span class="n">module_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span>
+
+        <span class="k">return</span> <span class="n">_register</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

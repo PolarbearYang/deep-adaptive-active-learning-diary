@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>utils.collect_env &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>utils.collect_env</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for utils.collect_env</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This file holding some environment constant for sharing by other files.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="n">TORCH_VERSION</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">__version__</span>
+
+
+<div class="viewcode-block" id="get_build_config"><a class="viewcode-back" href="../../source/utils.html#utils.collect_env.get_build_config">[docs]</a><span class="k">def</span> <span class="nf">get_build_config</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="collect_env"><a class="viewcode-back" href="../../source/utils.html#utils.collect_env.collect_env">[docs]</a><span class="k">def</span> <span class="nf">collect_env</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Collect the information of the running environments.</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        dict: The environment information. The following fields are contained.</span>
+
+<span class="sd">            - sys.platform: The variable of ``sys.platform``.</span>
+<span class="sd">            - Python: Python version.</span>
+<span class="sd">            - CUDA available: Bool, indicating if CUDA is available.</span>
+<span class="sd">            - GPU devices: Device type of each GPU.</span>
+<span class="sd">            - CUDA_HOME (optional): The env var ``CUDA_HOME``.</span>
+<span class="sd">            - NVCC (optional): NVCC version.</span>
+<span class="sd">            - GCC: GCC version, &quot;n/a&quot; if GCC is not installed.</span>
+<span class="sd">            - PyTorch: PyTorch version.</span>
+<span class="sd">            - PyTorch compiling details: The output of \</span>
+<span class="sd">                ``torch.__config__.show()``.</span>
+<span class="sd">            - TorchVision (optional): TorchVision version.</span>
+<span class="sd">            - OpenCV: OpenCV version.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env_info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sys.platform&#39;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="p">,</span> <span class="s1">&#39;Python&#39;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)}</span>
+
+    <span class="n">cuda_available</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span>
+    <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;CUDA available&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cuda_available</span>
+
+    <span class="k">if</span> <span class="n">cuda_available</span><span class="p">:</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()):</span>
+            <span class="n">devices</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_name</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">device_ids</span> <span class="ow">in</span> <span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;GPU &#39;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)]</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="kn">from</span> <span class="nn">mmcv.utils.parrots_wrapper</span> <span class="k">import</span> <span class="n">CUDA_HOME</span>
+        <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;CUDA_HOME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CUDA_HOME</span>
+
+        <span class="k">if</span> <span class="n">CUDA_HOME</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">CUDA_HOME</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">nvcc</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CUDA_HOME</span><span class="p">,</span> <span class="s1">&#39;bin/nvcc&#39;</span><span class="p">)</span>
+                <span class="n">nvcc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                    <span class="n">f</span><span class="s1">&#39;&quot;</span><span class="si">{nvcc}</span><span class="s1">&quot; -V | tail -n1&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">nvcc</span> <span class="o">=</span> <span class="n">nvcc</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">SubprocessError</span><span class="p">:</span>
+                <span class="n">nvcc</span> <span class="o">=</span> <span class="s1">&#39;Not Available&#39;</span>
+            <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;NVCC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nvcc</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">gcc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s1">&#39;gcc --version | head -n1&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">gcc</span> <span class="o">=</span> <span class="n">gcc</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;GCC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gcc</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>  <span class="c1"># gcc is unavailable</span>
+        <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;GCC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;n/a&#39;</span>
+
+    <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;PyTorch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;PyTorch compiling details&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_build_config</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">torchvision</span>
+        <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;TorchVision&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="k">except</span> <span class="n">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">env_info</span><span class="p">[</span><span class="s1">&#39;OpenCV&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">__version__</span>
+
+    <span class="k">return</span> <span class="n">env_info</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
