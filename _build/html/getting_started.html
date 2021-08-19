@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>&lt;no title&gt; &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  <title>Getting Started &mdash; deep-adaptive-active-learning v0.0 documentation</title>
   
 
   
@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="tutorials/new_dataset.html" />
+    <link rel="next" title="训练配置" href="train.html" />
     <link rel="prev" title="Welcome to deep-adaptive-active-learning’s documentation!" href="index.html" /> 
 </head>
 
@@ -87,10 +87,31 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul class="simple">
+              <p class="caption" role="heading"><span class="caption-text">目录:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">目录结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">训练一个模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">画图说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">教程文件</a></li>
 </ul>
-</div>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">训练一个模型:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="train.html">训练配置</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">画图程序:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotter/plotter.html">作图功能说明</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">教程:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/new_dataset.html">Tutorial 1: 加入新的数据集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/new_model.html">Tutorial 2: 加入新的模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/new_strategy.html">Tutorial 3: 加入新的主动学习策略</a></li>
+</ul>
+
             
           
         </div>
@@ -137,7 +158,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>&lt;no title&gt;</li>
+      <li>Getting Started</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -156,14 +177,69 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <p># Getting Started</p>
+  <div class="tex2jax_ignore mathjax_ignore section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>该文档提供了Deep Adaptive Active Learning框架的基本用法。</p>
-<p>## Page 1</p>
-<p>1</p>
-<p>## Page 2</p>
-<p>2</p>
-<p>## Page 3</p>
-<p>3</p>
+<div class="section" id="id1">
+<h2>目录结构<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>请在代码根目录下创建一个<code class="docutils literal notranslate"><span class="pre">data</span></code>文件夹以存储使用的数据集。
+若目录结构不同，这需要在<code class="docutils literal notranslate"><span class="pre">dataset</span></code>文件夹下的对应代码中调整路径。
+我们目前使用的数据集有CIFAR10, CIFAR100, MNIST, FashionMNIST, SVHN。
+若数据集不存在，程序会自动下载并提取这些数据集。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>deep-adaptive-active-learning
+├── architectures
+├── datasets
+├── plotter
+├── query_strategies
+├── utils
+├── data
+│   ├── cifar10
+│   │   ├── cifar-10-batches-py
+│   ├── cifar100
+│   │   ├── cifar-100-python
+│   ├── MNIST
+│   │   ├── processed
+│   │   ├── raw
+│   ├── SVHN
+│   │   ├── train_32x32.mat
+│   │   ├── test_32x32.mat
+│   │   ├── extra_32x32.mat
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>训练一个模型<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>我们分别为CIFAR10, CIFAR100, SVHN, MNIST, FashionMNIST五个数据集各提供了一个脚本
+（分别是<code class="docutils literal notranslate"><span class="pre">cifar10.sh</span></code>,<code class="docutils literal notranslate"><span class="pre">cifar100.sh</span></code>,<code class="docutils literal notranslate"><span class="pre">svhn.sh</span></code>,<code class="docutils literal notranslate"><span class="pre">mnist.sh</span></code>,<code class="docutils literal notranslate"><span class="pre">fashionmnist</span></code>），
+均默认使用entropy sampling策略。目前均只支持单GPU训练。</p>
+<p>使用方式以cifar10为例：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>bash cifar10.sh
+</pre></div>
+</div>
+<p>bash文件中需要指定的参数解释如下文档所示:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="train.html"><span class="doc std std-doc">训练配置</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>画图说明<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>画图相关的功能都封装在<code class="docutils literal notranslate"><span class="pre">plotter</span></code>文件夹下，每个active round会进行一次作图。
+目前正在考虑</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="plotter/plotter.html"><span class="doc std std-doc">作图功能说明</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2>教程文件<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>若要执行另外一些个性化功能，我们提供了如下教程：</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="tutorials/new_dataset.html"><span class="doc std std-doc">加入新的数据集</span></a></p></li>
+<li><p><a class="reference internal" href="tutorials/new_model.html"><span class="doc std std-doc">加入新的模型</span></a></p></li>
+<li><p><a class="reference internal" href="tutorials/new_strategy.html"><span class="doc std std-doc">设计新的策略</span></a></p></li>
+</ul>
+</div>
+</div>
 
 
            </div>
@@ -171,7 +247,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="tutorials/new_dataset.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="train.html" class="btn btn-neutral float-right" title="训练配置" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to deep-adaptive-active-learning’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

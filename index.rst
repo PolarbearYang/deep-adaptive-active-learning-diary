@@ -8,15 +8,32 @@ Welcome to deep-adaptive-active-learning's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: 目录:
 
-   Getting Started <getting_started.md>
+   getting_started.md
+
+.. toctree::
+   :maxdepth: 2
+   :caption: 训练一个模型:
+
+   train.md
+
+.. toctree::
+   :maxdepth: 2
+   :caption: 画图程序:
+
+   plotter/plotter.md
    
 .. toctree::
     :maxdepth: 2
-    :caption: Datasets:
+    :caption: 教程:
 
-    Dataset <tutorials/new_dataset.md>
+    tutorials/new_dataset.md
+    tutorials/new_model.md
+    tutorials/new_strategy.md
 
-Waiting to add...
+Indices and tables
 ==================
+
+* :ref:`genindex`
+* :ref:`search`

@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>训练配置 &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> deep-adaptive-active-learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/new_dataset.html">Dataset</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">deep-adaptive-active-learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>训练配置</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/train.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>训练配置<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>以resnet18+cifar10为例，默认<code class="docutils literal notranslate"><span class="pre">cifar10.sh</span></code>的内容如下：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="m">6</span> python main.py --save-freq <span class="m">100</span> <span class="se">\</span>
+    --model resnet18_cifar <span class="se">\</span>
+    --dataset cifar10 <span class="se">\</span>
+    --strategy EntropySampling <span class="se">\</span>
+    --num-init-labels <span class="m">1000</span> <span class="se">\</span>
+    --rounds <span class="m">20</span> <span class="se">\</span>
+    --num-query <span class="m">1000</span> <span class="se">\</span>
+    --updating <span class="se">\</span>
+    --n-epoch <span class="m">200</span> <span class="se">\</span>
+    --batch-size <span class="m">64</span> <span class="se">\</span>
+    --lr <span class="m">0</span>.001 <span class="se">\</span>
+    --momentum <span class="m">0</span>.9 <span class="se">\</span>
+    --plot-mode tsne <span class="se">\</span>
+    --plot-using-predefined <span class="se">\</span>
+    --plot-preload-path pretrained/resnet18_cifar_cifar10_tsne_embedded.npy
+</pre></div>
+</div>
+<p>其中的必要参数为：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--model</span></code>: 使用的模型名称，名称必须全部小写。目前可用的模型及其使用场景将在下面列出。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dataset</span></code>: 使用的数据集名称，名称必须全部小写。目前可用的是<code class="docutils literal notranslate"><span class="pre">cifar10</span></code>,<code class="docutils literal notranslate"><span class="pre">cifar100</span></code>,<code class="docutils literal notranslate"><span class="pre">mnist</span></code>,<code class="docutils literal notranslate"><span class="pre">fashionmnist</span></code>,<code class="docutils literal notranslate"><span class="pre">svhn</span></code>,<code class="docutils literal notranslate"><span class="pre">mixedgaussian</span></code>。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">mixedgaussian</span></code>是由三个中心不同，方差相同的分布生成的二维点集，用于做3-分类。</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--strategy</span></code>: 使用的策略名称。目前可用的主动学习策略名称将在下面列出。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--num-init-labels</span></code>: 初始样本标注量。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rounds</span></code>: 总共进行多少active rounds。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--num-query</span></code>: 每个active round查询的样本数量。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--updating</span></code>: 每个active round是使用update方式还是retraining方式。有此选项则载入上一个轮次的参数进行训练；否则重新开始训练。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--n-epoch</span></code>: 每个active round训练多少个epoch。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--batch-size</span></code>: batch size。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lr</span></code>: 初始学习率。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--momentum</span></code>: optimizer中的momentum参数。</p></li>
+</ul>
+<p>可选参数为：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--work-dir</span></code>: 指定工作路径。该路径存储所有运行过程中产生的信息，包括log、参数、分析图像等。</p>
+<ul>
+<li><p>若未事先指定，文件夹名称为{模型名}+{数据集名}+{运行开始时间戳}+{ID}</p></li>
+<li><p>若事先指定且文件夹不存在/文件夹下没有resume信息，则从该文件夹下从头开始训练</p></li>
+<li><p>若事先指定且文件夹下有恢复信息，则读取该文件夹中的训练信息并继续训练（用于程序意外中断的情况）</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plot-mode</span></code>: 使用哪种方式进行降维聚类可视化。可使用<code class="docutils literal notranslate"><span class="pre">tsne</span></code>, <code class="docutils literal notranslate"><span class="pre">umap</span></code>, <code class="docutils literal notranslate"><span class="pre">raw</span></code>。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">raw</span></code>不进行任何降维手段，只能用于二维点构成的数据集。</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plot-using-predefined</span></code>: 若使用此参数，则我们使用预定义的降维坐标可视化数据集。必须和<code class="docutils literal notranslate"><span class="pre">--plot-preload-path</span></code>载入的坐标搭配使用。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plot-preload-path</span></code>: 事先制定的数据点降维后的二维坐标路径。必须以<code class="docutils literal notranslate"><span class="pre">*.npy</span></code>格式存储（不要带pickle）。</p></li>
+</ul>
+<div class="section" id="id2">
+<h2>训练结果存储的架构<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>我们将训练得到的参数、log信息以及figure存储在工作路径中（默认存储在task文件夹下），以在CIFAR10上训练的ResNet18为例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>resnet18_cifar_cifar10_2021-08-18-10-50_19321c36
+├── active_round_0
+├── active_round_1
+│   ├── figures
+│   │   ├── train
+│   │   ├── eval
+│   │   ├── test
+│   ├── active_round_1-label_num_2000-epoch_100.pth
+│   ├── active_round_1-label_num_2000-epoch_200.pth
+│   ├── ...
+├── ...
+├── active_round_20
+├── 20210818_105051.log
+├── 20210818_105051.log.json
+├── acc_num_labels.png
+├── latest.pth
+├── ...
+</pre></div>
+</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">latest.pth</span></code>中存储所有resume的必要信息。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span></code>及<code class="docutils literal notranslate"><span class="pre">log.json</span></code>中存储所有分析用的必要信息，包含每个iter及epoch中的loss和acc，以及每个round中标注集合查询集。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acc_num_labels.png</span></code>仅在训练完成后出现，表示acc随样本标注量增加的曲线。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">active_round_{num}</span></code>文件夹下存储训练模型参数以及画出的所有图像，数据集中的训练集/验证集/测试集会各有一组图像。</p>
+<ul>
+<li><p>所有图像都集中在<code class="docutils literal notranslate"><span class="pre">figure</span></code>子文件夹下。为了节约时间，降维后的样本坐标也会以<code class="docutils literal notranslate"><span class="pre">*.npy</span></code>格式存储在该文件夹下。</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>目前可用的模型名称<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>model</p></th>
+<th class="head"><p>Input size</p></th>
+<th class="head"><p>notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>resnet18_cifar</p></td>
+<td><p>32 x 32</p></td>
+<td><p>专用于CIFAR系列数据集的ResNet18</p></td>
+</tr>
+<tr class="row-odd"><td><p>resnet34_cifar</p></td>
+<td><p>32 x 32</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-even"><td><p>resnet50_cifar</p></td>
+<td><p>32 x 32</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-odd"><td><p>resnet101_cifar</p></td>
+<td><p>32 x 32</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-even"><td><p>resnet152_cifar</p></td>
+<td><p>32 x 32</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-odd"><td><p>resnet18</p></td>
+<td><p>224 x 224</p></td>
+<td><p>torchvision中的原模型</p></td>
+</tr>
+<tr class="row-even"><td><p>resnet34</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-odd"><td><p>resnet50</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-even"><td><p>resnet101</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-odd"><td><p>resnet152</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-even"><td><p>resnext50_32x4d</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-odd"><td><p>resnext101_32x8d</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-even"><td><p>wide_resnet50_2</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-odd"><td><p>wide_resnet101_2</p></td>
+<td><p>224 x 224</p></td>
+<td><p>同上</p></td>
+</tr>
+<tr class="row-even"><td><p>toynet</p></td>
+<td><p>1 x 2</p></td>
+<td><p>用于对二维点集进行分类的简单架构</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id4">
+<h2>目前可用的主动学习策略名称<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>strategy</p></th>
+<th class="head"><p>notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RandomSampling</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>LeastConfidence</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>MarginSampling</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>EntropySampling</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>LeastConfidenceDropout</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>MarginSamplingDropout</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>EntropySamplingDropout</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>KMeansSampling</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>KCenterGreedy</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>BALDDropout</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>CoreSet</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>AdversarialBIM</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>AdversarialDeepFool</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, angrybear.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

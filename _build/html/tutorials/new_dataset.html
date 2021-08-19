@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>&lt;no title&gt; &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  <title>Tutorial 1: 加入新的数据集 &mdash; deep-adaptive-active-learning v0.0 documentation</title>
   
 
   
@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="../getting_started.html" /> 
+    <link rel="prev" title="Getting Started" href="../getting_started.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,10 +86,18 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul class="simple">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 </ul>
-</div>
+<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">添加数据集</a></li>
+</ul>
+</li>
+</ul>
+
             
           
         </div>
@@ -136,7 +144,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>&lt;no title&gt;</li>
+      <li>Tutorial 1: 加入新的数据集</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -155,7 +163,95 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <p># Tutorial 2: Adding New Dataset</p>
+  <div class="tex2jax_ignore mathjax_ignore section" id="tutorial-1">
+<h1>Tutorial 1: 加入新的数据集<a class="headerlink" href="#tutorial-1" title="Permalink to this headline">¶</a></h1>
+<p>定制数据集需要包含的信息有：</p>
+<ul class="simple">
+<li><p>每个label对应的类名称</p></li>
+<li><p>对应于该数据集的transform</p></li>
+<li><p>包装该数据集的Dataset类（我们在文件中将其写为各种handler）</p></li>
+<li><p>一个包装该数据集的类，该类别能够返回：</p>
+<ul>
+<li><p>数据集的train/eval/test split的raw data及对应标签</p></li>
+<li><p>类别数量</p></li>
+<li><p>每个label映射到类名的字典</p></li>
+<li><p>用于包装该数据集的Dataset类</p></li>
+<li><p>封装了训练transform和测试transform的类</p>
+<ul>
+<li><p>参考<code class="docutils literal notranslate"><span class="pre">datasets.base_transform.base_transform_wrapper</span></code>，其能够返回<code class="docutils literal notranslate"><span class="pre">ord_train_transform</span></code>与<code class="docutils literal notranslate"><span class="pre">ord_eval_transform</span></code>这两个属性，对应两种transform（这也得根据模型决定，之后考虑把该类分离出来）</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>为了方便处理，我们不直接使用torch中默认的数据集封装器，而是直接取出raw data再用我们自己的类进行处理，这样可以方便制作动态数据集。</p>
+<div class="section" id="id1">
+<h2>添加数据集<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>假定我们已经写好了以上类：</p>
+<ul class="simple">
+<li><p>在<code class="docutils literal notranslate"><span class="pre">datasets</span></code>文件夹下添加该方法，并在<code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>文件中import该类并在<code class="docutils literal notranslate"><span class="pre">__all__</span></code>中添加该方法对应的类名称。以后在调用该数据集时，只需输入该类的名称即可。</p></li>
+<li><p>该方法对应的文件中务必添加<code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">.builder</span> <span class="pre">import</span> <span class="pre">DATASETS</span></code></p></li>
+<li><p>包装该数据集并返回以上五大信息的类前面务必添加<code class="docutils literal notranslate"><span class="pre">&#64;DATASETS.register_module()</span></code></p></li>
+</ul>
+<p>一个例子如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.builder</span> <span class="kn">import</span> <span class="n">DATASETS</span>
+<span class="kn">from</span> <span class="nn">.base_transform</span> <span class="kn">import</span> <span class="n">base_transform_wrapper</span>
+
+<span class="k">class</span> <span class="nc">MixedGaussian_wrapper</span><span class="p">(</span><span class="n">base_transform_wrapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transformations designed for MixedGaussian Dataset&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MixedGaussian_wrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ord_train_transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ord_eval_transform</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">class</span> <span class="nc">MixedGaussian</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>  <span class="c1"># 某个生成混合高斯分布的类</span>
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="p">[[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]],</span>
+                 <span class="n">num_per_class</span><span class="o">=</span><span class="p">[</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span>
+                 <span class="n">n_dims</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">target_transform</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">generate_from_mixture</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">num_per_class</span><span class="p">,</span> <span class="n">n_dims</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">num_per_class</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_transform</span> <span class="o">=</span> <span class="n">target_transform</span>
+
+<span class="k">class</span> <span class="nc">MixedGaussianHandler</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">index</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+
+<span class="nd">@DATASETS.register_module</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">mixedgaussian</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data_train</span> <span class="o">=</span> <span class="n">MixedGaussian</span><span class="p">(</span><span class="n">num_per_class</span><span class="o">=</span><span class="p">[</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span> <span class="o">=</span> <span class="n">data_train</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data_train</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">data_eval</span> <span class="o">=</span> <span class="n">MixedGaussian</span><span class="p">(</span><span class="n">num_per_class</span><span class="o">=</span><span class="p">[</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_eval</span> <span class="o">=</span> <span class="n">data_eval</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y_eval</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data_eval</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">data_test</span> <span class="o">=</span> <span class="n">MixedGaussian</span><span class="p">(</span><span class="n">num_per_class</span><span class="o">=</span><span class="p">[</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_test</span> <span class="o">=</span> <span class="n">data_test</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data_test</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">MixedGaussianHandler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">MixedGaussian_wrapper</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_train</span><span class="p">,</span>\
+               <span class="bp">self</span><span class="o">.</span><span class="n">X_eval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_eval</span><span class="p">,</span>\
+               <span class="bp">self</span><span class="o">.</span><span class="n">X_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_test</span><span class="p">,</span>\
+               <span class="mi">3</span><span class="p">,</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">},</span> <span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 
 
            </div>
@@ -163,7 +259,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../getting_started.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

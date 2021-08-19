@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>main module &mdash; deep-adaptive-active-learning v0.0 documentation</title>
+  <title>作图功能说明 &mdash; deep-adaptive-active-learning v0.0 documentation</title>
   
 
   
@@ -140,13 +140,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>main module</li>
+      <li>作图功能说明</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/source/main.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/plotter/plotter.md.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -159,27 +159,44 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-main">
-<span id="main-module"></span><h1>main module<a class="headerlink" href="#module-main" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="main.run">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/main.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.set_seed">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/main.html#set_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.set_seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the seed is specified, the process will be deterministic.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>seed</strong> – the seed you wanna set</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <div class="tex2jax_ignore mathjax_ignore section" id="id1">
+<h1>作图功能说明<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>我们目前知道图像都存储在<code class="docutils literal notranslate"><span class="pre">工作路径/active_round_{num}/figures</span></code>文件夹下，并且我们对训练/验证/测试集各画了一组图像，来可视化训练过程中分布产生偏移的情况。每个active round结束后都会作一次图。目前已有的图像包括：</p>
+<ul class="simple">
+<li><p>条形图</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">entropy_bar_in_range</span></code>: 显示不同entropy区间样本的数量</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">entropy_bar_in_rank</span></code>: 显示不同entropy(by rank)区间样本的数量</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">incorrect_bar</span></code>: 显示每一个类别中被模型标错的样本数量</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">correct_incorrect_bar_by_class</span></code>: 显示每一个类别中被模型标对/标错的样本数量对比</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">labeled_bar</span></code>: 显示每一个类别中标注的样本数量</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">queried_bar_by_class</span></code>: 显示每一个类别中查询的样本数量</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">incorrect_queried_bar_by_class</span></code>: 显示每一个类别在查询集中被模型标错的样本数量对比</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">correct_incorrect_queried_bar_by_class</span></code>: 显示每一个类别在查询集中被模型标对/标错的样本数量对比</p></li>
+</ul>
+</li>
+<li><p>二维散点图，将数据降维后显示其分布</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">{method}_by_class</span></code>: 画出所有样本根据模型输出的特征向量分布（降为2维）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{method}_by_labeled_or_not</span></code>: 画出所有有标注/无标注样本的分布</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{method}_by_correct_or_not</span></code>: 画出所有被模型标对/标错的样本分布</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{method}_by_query</span></code> 画出每一代查询的点相对于全数据集的分布</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{method}_by_{value}</span></code>画出所有样本的热度图（关于某一个值，比如熵、加权、其他得分、度量等）</p>
+<ul>
+<li><p>这个功能比较花时间，需要优化</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>如果该文件夹下产生了另一个<code class="docutils literal notranslate"><span class="pre">with_predefined</span></code>文件夹，则该文件夹下所有的图都是基于某种预定义的分布进行的（预训练好的模型仅用于作图，可能会更好地显示数据集的实际分布）。</p>
+<div class="section" id="id2">
+<h2>其他一些小细节<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>第一个active round中没有任何关于query的信息，这些图像将被忽略。</p></li>
+<li><p>数据集中的eval和test部分不存在标注/query/加权的情况，因此没有与这三者相关的信息。</p></li>
+</ul>
+</div>
 </div>
 
 
