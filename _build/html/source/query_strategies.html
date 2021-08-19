@@ -85,15 +85,31 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">query_strategies package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-query_strategies.active_learning_by_learning">query_strategies.active_learning_by_learning module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.adversarial_bim">query_strategies.adversarial_bim module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.adversarial_deepfool">query_strategies.adversarial_deepfool module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.bayesian_active_learning_disagreement_dropout">query_strategies.bayesian_active_learning_disagreement_dropout module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.builder">query_strategies.builder module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.core_set">query_strategies.core_set module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.entropy_sampling">query_strategies.entropy_sampling module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.entropy_sampling_dropout">query_strategies.entropy_sampling_dropout module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.kcenter_greedy">query_strategies.kcenter_greedy module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.kmeans_sampling">query_strategies.kmeans_sampling module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.least_confidence">query_strategies.least_confidence module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.least_confidence_dropout">query_strategies.least_confidence_dropout module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.margin_sampling">query_strategies.margin_sampling module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.margin_sampling_dropout">query_strategies.margin_sampling_dropout module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.random_sampling">query_strategies.random_sampling module</a></li>
+<li><a class="reference internal" href="#module-query_strategies.strategy">query_strategies.strategy module</a></li>
+<li><a class="reference internal" href="#module-query_strategies">Module contents</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Datasets:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/new_dataset.html">Dataset</a></li>
+</li>
 </ul>
-
+</div>
             
           
         </div>
@@ -317,14 +333,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="query_strategies.entropy_sampling.EntropySampling.query">
 <span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling.html#EntropySampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.entropy_sampling.EntropySampling.query" title="Permalink to this definition">¶</a></dt>
-<dd><p>Query new samples according the current model or some strategies.</p>
+<dd><p>Query samples with the highest entropy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+<dt>Returns:</dt><dd><p>np.ndarray[int]: The indices of queried samples.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -912,14 +928,14 @@ Actually we output distributions of all dropout versions in a 3-dimensional tens
 <dl class="py method">
 <dt class="sig sig-object py" id="query_strategies.EntropySampling.query">
 <span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/query_strategies/entropy_sampling.html#EntropySampling.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#query_strategies.EntropySampling.query" title="Permalink to this definition">¶</a></dt>
-<dd><p>Query new samples according the current model or some strategies.</p>
+<dd><p>Query samples with the highest entropy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>n</strong> – (int)The number of samples to query.</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>list[int]: The indices of queried samples.</p>
+<dt>Returns:</dt><dd><p>np.ndarray[int]: The indices of queried samples.</p>
 </dd>
 </dl>
 </dd></dl>
